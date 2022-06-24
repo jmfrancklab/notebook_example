@@ -1,0 +1,15 @@
+\section{Example project}
+This is an example project!!
+I'm learning to plot in python!
+\subsection{some basic examples!}
+\subsubsection{example plot}\label{sec:examplePlot1}
+Here's an example plot!
+\par
+\begin{python}[on]
+from pylab import *
+from pyspecdata import *
+with figlist_var() as fl:
+    fl.next('this is a plot')
+    fl.plot(r_[0:10])
+\end{python}
+\par

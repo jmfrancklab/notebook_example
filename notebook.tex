@@ -1,0 +1,44 @@
+\documentclass[10pt]{article}
+\usepackage{mynotebook}
+
+\usepackage{cleveref}%for cref
+\crefname{equation}{Eq.}{Eqs.}
+\crefname{section}{Section}{Sections}
+\crefname{paragraph}{\textparagraph}{\textparagraph{}s}
+\crefname{table}{Table}{Tables}
+\crefname{figure}{Fig.}{Figs.}
+
+\renewcommand\pythonHeader{from pylab import *;
+from pyspecdata import *}% typically, this imports mayavi and the acert files -- we need neither here
+\gdef\globalPythonHeader{import os;
+os.environ['pyspecdata_figures']='latex';}% this ignores the newline, so just use semicolons to avoid the trouble
+\begin{document}
+Here are the versions of various scripts that I'm using
+\par
+\begin{python}[on]
+# run:
+# python check_ver.py > versions.txt
+import os
+import pyspecdata
+import pyspecProcScripts
+import Instruments
+import sys
+def dos2mingw(x):
+    return os.path.split(os.path.normpath(x))[0].replace('C:\\','\\c\\').replace('\\','/')
+for thismodule in [pyspecdata, pyspecProcScripts]:
+    print(r'\begin{verbatim}')
+    print(thismodule.__name__)
+    print("\n\tlocation -->",thismodule.__file__,end="")
+    os.chdir(dos2mingw(thismodule.__file__))
+    print("\n\tbranch: ",end="")
+    #sys.stdout.flush()
+    os.system('git rev-parse --abbrev-ref HEAD')
+    print("\n\thash: ",end="")
+    #sys.stdout.flush()
+    os.system('git rev-parse @')
+    print(r'\end{verbatim}')
+\end{python}
+\par
+\input{notebook220623.tex}
+\input{projects/example.tex}
+\end{document}

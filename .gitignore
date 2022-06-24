@@ -1,0 +1,9 @@
+auto_figures/
+*.aux
+*.idx
+*.log
+*.out
+*.pdf
+*.upa
+*.upb
+scripts/
