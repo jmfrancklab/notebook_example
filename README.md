@@ -6,7 +6,7 @@ To make this work
 1.  clone this repo
 2.  unpack the zip/tgz file into your home directory
 3.  register it the directory from the zip/tgz as a texmf directory (or unpack into your existing registered texmf directory -- [for miktex see here](https://miktex.org/kb/texmf-roots) -- for linux/unix/mac use initexmf)
-4.  use `pdflatex_notebook_wrapper -synctex=1 notebook.tex` (in the main directory of this repo, the command `pdflatex_notebook_wrapper` is supplied by pySpecData)
+4.  in the main directory of this repo, run `pdflatex_notebook_wrapper -synctex=1 notebook.tex` (the command `pdflatex_notebook_wrapper` is supplied by pySpecData, and should be in your path if you've installed pySpecData)
 
 pySpecData comes with embedded with the capability to run and update python environments that are embedded into latex (we haven't done a detailed comparison of this to pythontex, which might also be an alternate option -- this is based on code we've been using for a long time, and just works for us).
 
