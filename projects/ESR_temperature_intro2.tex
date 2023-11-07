@@ -1,0 +1,33 @@
+\subsubsection{second round of VTU experiments with Braiman}
+check frequency that we had used previously 9.33~GHz
+looking at Br$_3$? using a SiO2 catalyst, since Al2O3 catalyst showed a defect in the EPR near g=2
+this time, we want to go down to 100K, to see if we can quench relaxation mechanisms that could be broadening our signal??
+
+hook up VTU
+\o[13:37]{\textbf{note that it's really important to check the positioning of the transfer line before connecting it to avoid putting pressure on the dewar}}
+set VTU to 200K, so that it's cold but not sucking up moisture (sample is stored on dry ice, so this should be the temperature that the sample is at)
+if temperature doesn't drop, look for leakage at the bottom of the resonator, which would indicate the ground glass joint isn't attached properly
+\o[13:53]{}
+\begin{err}
+    \o[13:40]{even though it sees the dewar is full, temperature is not moving}
+    exit the program and start again
+    \o[13:42]{doesn't help}
+    \o[13:52]{turns out it wasn't hooked up}
+\end{err}
+insert sample and drop down to 100K and set settling time to 20~s (like last time)
+\o[14:02]{started to slow down a bit, but at 112K}
+\o[14:04]{at 102K}
+go ahead and tune (near 9.33) when getting close
+\o{$\checkmark$}
+make a copy of \texttt{initial_scan_190K_10G_191108.DSC} for a wide scan with 10~G
+modulation -- be sure to select all harmonics
+\o[14:14]{}
+let it run until we have decent SNR
+\o[15:20]{at this point, have run \texttt{wide_10G_sample_run2_191125.DSC} and \texttt{wide_10G_sample_191125.DSC}}
+make a copy of \texttt{zoom_left_191108}, make sure mod amp is 9.6~G, and select all harmonics and run that
+\o[15:21]{}
+\o[16:46]{done running two runs of signal for both zoom left and wide}
+set it to warm up to 200K
+\o[16:51]{it's warm}
+pull out and switch background
+\o[18:51]{at this point, took the background (called bg) and shut everything down (left cavity for Alec)}
