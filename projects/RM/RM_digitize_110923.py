@@ -124,11 +124,11 @@ c_visc = nddata(np.log10(visc/viscT),[-1],['invT']).setaxis('invT',1000/viscT).p
 def visc_vs_T(T):
     invT = 1000/T
     log_visc_times_T = c_visc[0]+c_visc[1]*invT
-    return viscT*10**(log_visc_times_T)
+    return T*10**(log_visc_times_T)
 plt.plot(1000/viscT,np.log10(visc/viscT),'o')
 T = r_[250:305:100j]
 plt.plot(1000/T, np.log10(visc_vs_T(T)/T))
-plt.ylabel(r'$\log_10(\eta)$ of heptane')
+plt.ylabel(r'$\log_10(\eta/T)$ of heptane')
 plt.xlabel('1000 / T')
 plt.figure()
 plt.plot(viscT,visc,'o')
