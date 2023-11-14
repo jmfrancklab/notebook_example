@@ -179,14 +179,19 @@ for thiskey, thisval in data["yoshioka"]["digitized"].items():
     #here x is -log τ_c
     tau = 10 ** (-y)
     T = 1000 / x
-    plt.plot(1000 / T, np.log10(tau * T), "o-", label=thiskey)
+    plt.plot(1000 / T, np.log10(tau), "o-", label=thiskey)
     fudge_factor = 1#0.316
+    # on the next line, we calculated τT, because it's supposed to be
+    # proportional to η
     tau_T_RM = 4*np.pi*visc_vs_T(T)*(r_vs_w0(thisw0)*fudge_factor)**3/3/k_B
-    plt.plot(1000 / T, np.log10(tau_T_RM), label=r"$\tau_{RM}$ for "+thiskey)
-    plt.ylabel(r"$\log(\tau_c T / \mathrm{s} \cdot \mathrm{K})$")
+    # but here, we note we want η/T, which is proportional to
+    # 1/D (D = diffusivity), which is what should be arrhenius
+    plt.plot(1000 / T, np.log10(tau_T_RM/T), label=r"$\tau_{RM}$ for "+thiskey)
+    plt.ylabel(r"$\log(\tau_c / \mathrm{s} \cdot \mathrm{K})$")
     plt.xlabel(r"1000 K / $T$")
-    tau_T_aq = 1/(1/(tau*T)-1/(tau_T_RM))
-    plt.plot(1000 / T, np.log10(tau_T_aq), label =r"$\tau_{aq}$ for"+thiskey)
+    # following above reasoning, we just want log of τ
+    tau_aq = 1/(1/(tau)-1/(tau_T_RM*T))
+    plt.plot(1000 / T, np.log10(tau_aq), label =r"$\tau_{aq}$ for"+thiskey)
 plt.ylabel(r"$\log(\tau_c T / \mathrm{s} \cdot \mathrm{K})$")
 plt.xlabel(r"1000 K / $T$")
 plt.legend()
