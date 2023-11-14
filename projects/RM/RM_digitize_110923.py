@@ -120,14 +120,14 @@ visc_data = [(254.1619011,6.8300E-04),
 (300.8423586,3.7600E-04)]
 viscT,visc = map(np.array,zip(*visc_data))
 plt.figure()
-c_visc = nddata(np.log10(visc),[-1],['invT']).setaxis('invT',1000/viscT).polyfit('invT')
+c_visc = nddata(np.log10(visc/viscT),[-1],['invT']).setaxis('invT',1000/viscT).polyfit('invT')
 def visc_vs_T(T):
     invT = 1000/T
-    log_visc = c_visc[0]+c_visc[1]*invT
-    return 10**log_visc
-plt.plot(1000/viscT,np.log10(visc),'o')
+    log_visc_times_T = c_visc[0]+c_visc[1]*invT
+    return viscT*10**(log_visc_times_T)
+plt.plot(1000/viscT,np.log10(visc/viscT),'o')
 T = r_[250:305:100j]
-plt.plot(1000/T, np.log10(visc_vs_T(T)))
+plt.plot(1000/T, np.log10(visc_vs_T(T)/T))
 plt.ylabel(r'$\log_10(\eta)$ of heptane')
 plt.xlabel('1000 / T')
 plt.figure()
