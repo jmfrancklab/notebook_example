@@ -10,24 +10,26 @@ from pyspecdata import *
 import matplotlib.pyplot as plt
 fl = figlist_var()
 for filename,thislabel in [
-    ("230612_water.npz","background"),
-    #@("220808_10mM_TEMPOL.npz","10mM"),
+    ("240403_Quartz.npz","Quartz with probe coil"),
+    ("240306_L56_dil_MTSL_probeA_Rasbatch240220.npz","background"),
+    #("220808_10mM_TEMPOL.npz","10mM"),
     #("220808_70mM_TEMPOL.npz","70mM"),
     #("220720_stock_4.npz","4"),
-    ("230612_Q183_pRbatch230605.npz","Q183_230612"),
-    ("230612_N187_pRbatch230605.npz","N187_230612"),
+    # ("230612_Q183_pRbatch230605.npz","Q183_230612"),
+    # ("230612_N187_pRbatch230605.npz","N187_230612"),
     #("221221_T177_MSL_LC-CC.npz","T177_MSL"),
     #("221221_S175_MSL_LC-CC.npz","S175_MSL"),
        ]:
     if thislabel == "background": 
-        thisfile = search_filename(filename,exp_type="francklab_esr/Warren",
+        thisfile = search_filename(filename,exp_type="francklab_esr/warren",
                 unique=True)
     else: 
-        thisfile = search_filename(filename, exp_type="francklab_esr/Warren",
+        thisfile = search_filename(filename, exp_type="francklab_esr/romana",
                 unique=True)
     data = np.load(thisfile)
     nd_data = {}
     fl.next('Tuning curve comparison-zoom2')
+    gridandtick(plt.gca())
     zoom_data = data['zoom2'].squeeze()
     zoom_data_nd = nddata(zoom_data[0],'frequency')
     zoom_data_nd.setaxis('frequency',zoom_data[1])
