@@ -1,0 +1,36 @@
+from pyspecdata import *
+import numpy as np
+from pyspecProcScripts import *
+from pyspecProcScripts import QESR_scalefactor
+fieldaxis = '$B_0$'
+exp_type = "francklab_esr/alex"
+calibration_name = "220720"
+T_MW = 172.24 # g/mol
+
+ep_weight = (
+    nddata(r_[1.001, 1.002, 1.0001, 1.001, 1.001])
+    .set_units("g")
+    .mean(stderr=True)
+)
+ep_and_oht_weight = (
+    nddata(r_[1.011, 1.012, 1.0013, 1.014, 1.014])
+    .set_units("g")
+    .mean(stderr=True)
+)
+ep_water_and_oht_weight = (
+    nddata(r_[2.011, 2.022, 2.0043, 2.064, 2.034])
+    .set_units("g")
+    .mean(stderr=True)
+)
+water_vol = (ep_water_and_oht_weight - ep_and_oht_weight) / nddata(
+    0.997 
+).set_units("g/mL")
+oht_moles = (ep_and_oht_weight - ep_weight) / nddata(210.1).set_units("g/mol")
+conc = oht_moles / water_vol
+# the following is because "conc" is in weird units
+# (I call this [conc units] here)
+# As explained in docs, conc.div_units('mM') gives x such that
+# (x mM)/[conc units] = 1, which is what we need to convert to mM
+conc = (conc.C.set_units(None) * conc.div_units("mM")).set_units("mM")
+
+# isooctane density 0.692 g/mL

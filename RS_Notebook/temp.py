@@ -6,11 +6,11 @@ from pyspecProcScripts import *
 from pyspecProcScripts import QESR_scalefactor
 colors = plt.rcParams["axes.prop_cycle"]() # this is the default matplotlib cycler for line styles
 fieldaxis = '$B_0$'
-exp_type = "francklab_esr/alex"
+exp_type = "francklab_esr/romana"
 with figlist_var() as fl:
     for filenum, (thisfile, thislabel, pushout, calibration, diameter, background) in enumerate(
             [
-              ('230929_100mM_tempo_so4.DSC','CAT16', 0.3, '230202','QESR caps',
+              ('230929_100mM_tempo_so4.DSC','tempo_so4', 0.3, '230202','QESR caps',
                   find_file('230511_water.DSC',exp_type=exp_type)['harmonic',0]),
              ]):
         d = find_file(thisfile,exp_type = exp_type)

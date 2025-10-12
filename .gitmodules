@@ -1,0 +1,3 @@
+[submodule "ODNP_measurement"]
+	path = ODNP_measurement
+	url = git@github.com:jmfrancklab/shared_protocol_run.git

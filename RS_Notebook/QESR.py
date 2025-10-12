@@ -12,7 +12,7 @@ with figlist_var() as fl:
     for filenum, (thisfile, that_exp_type, thislabel, pushout, concscale, calibration, diameter,
             background) in enumerate(
             [
-              ('230929_100mM_tempo_so4.DSC',exp_type,'6-15-23',0.3, 190.7, '230202','QESR caps',
+              ('240220_TempoSO4_W20_run1.DSC',exp_type,'240220_TempoSO4_W20_run1_cooling_293',0.3, 190.7, '230202','QESR caps',
                   None),
             
              ]):
@@ -20,6 +20,7 @@ with figlist_var() as fl:
         d -= d[fieldaxis, -100:].data.mean()
         if "harmonic" in d.dimlabels:
             d = d['harmonic',0]
+        d = d["Temperature":293] ##RS
         color = d.get_plot_color()
         fl.next("Raw QESR")
         fl.plot(d,color=color, label=thislabel,alpha = 0.5)

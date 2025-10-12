@@ -13,9 +13,9 @@ with figlist_var() as fl:
             [
               
                
-              # ('230621_A_ISOOCTANE_CAT16.DSC', exp_type, '(A) in pure isooctane', 'black', 0.2, 200, '230202', 'QESR caps',
-              #      50),
-               ('230621_w0_0.DSC', exp_type, '(A) W0=0', 'red', 0.2, 200, '230202', 'QESR caps',
+               ('230621_A_ISOOCTANE_CAT16.DSC', exp_type, '(A) in pure isooctane', 'black', 0.2, 200, '230202', 'QESR caps',
+                    50),
+               ('230929_100mM_TEMPOSO4.DSC', exp_type, '(A) W0=0', 'red', 0.2, 200, '230202', 'QESR caps',
                     35),
                ('230621_w0_2.DSC', exp_type, '(B) W0=2', 'orange', 0.2, 200, '230202', 'QESR caps',
                     30),

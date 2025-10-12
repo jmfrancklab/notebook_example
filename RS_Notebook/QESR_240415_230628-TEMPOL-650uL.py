@@ -1,0 +1,426 @@
+from matplotlib.pyplot import axvline, axhline, gca
+from pint import UnitRegistry
+from pyspecdata import *
+from itertools import cycle
+from pyspecProcScripts import *
+from pyspecProcScripts import QESR_scalefactor
+colors = plt.rcParams["axes.prop_cycle"]() # this is the default matplotlib cycler for line styles
+init_logging(level='debug')
+fieldaxis = '$B_0$'
+exp_type = "francklab_esr\warren"
+plot_rescaled = False
+all_conc = []
+with figlist_var() as fl:
+    for filenum, (thisfile, exp_type, thislabel, thiscolor, pushout, concscale, calibration, diameter, background) in enumerate(
+            [
+            #{{{old
+              #('220720_stock_2.DSC',70.0,'TGA stock 2',0.5, '220720','QESR caps',
+              #    find_file('220720_background.DSC',exp_type=exp_type)['harmonic',0]),
+              ('230628_650uL_TEMPOL.DSC',exp_type,'230628 TEMPOL','orange',0.2, 670,'AGs','QESR caps',
+                    None),
+              #    find_file('230417_water.DSC',exp_type=exp_type)['harmonic',0]),
+              #('230628_TEMPOL_dil1.DSC', exp_type,'230628 TEMPOL 1:3 dilution','blue', 0.2,210,'AGs','QESR caps',
+              #      None),
+              #('230628_TEMPOL_dil1-2.DSC', exp_type,'230628 TEMPOL 1:2 dilution','darkorchid',0.2, 330,'AGs','QESR caps',
+              #      None),
+              #    find_file('230202_water.DSC',exp_type=exp_type)['harmonic',0]),
+              #('230202_stock_2l.DSC',70.0,'230202 stock 2l',0.5, '230202','QESR caps',
+              #    find_file('230202_water.DSC',exp_type=exp_type)['harmonic',0]),
+            #}}}
+            #{{{pR - A174, S175, T177
+              #('231120_T177_pRbatch231106.DSC', exp_type, 'T177_11-20', 'royalblue', 0.5, 159, 'AGs', 'QESR caps',
+              #    find_file('231120_water.DSC', exp_type = exp_type)['harmonic', 0]),
+              #('230222_batch230130_pR_T177.DSC',exp_type, 'T177_2-22', 'red', 0.5, 795, 'AGs', 'QESR caps',
+              #    find_file('230222_background.DSC', exp_type=exp_type)['harmonic',0]),
+
+            #}}}
+            #{{{pR - S179, Q183, S184
+              #('231115_S184_pRbatch231106.DSC', exp_type, 'S184 11-15', 'green', 0.5, 712.2, 'AGs', 'QESR caps',
+              #    find_file('231115_water_mc.DSC', exp_type = exp_type)['harmonic',0]),
+              #('230501_pR_batch230329_S184.DSC', exp_type, 'S184 5-1', 'darkred',0.5, 514.6, 'AGs', 'QESR caps',
+              #    find_file('230501_water_500.DSC', exp_type = exp_type)['harmonic', 0]),
+              #('220927_pRS184_MTSL.DSC', exp_type, 'S184 9-27-22', 'gold', 0.5, 400, 'AGs', 'QESR caps',
+              #    None), #find_file('background.DSC', exp_type=exp_type)['harmonic',0]),
+              #('230222_pR_batch230130_pR_S184.DSC', exp_type, 'S184 2-22', 'blue',0.5, 200, 'AGs', 'QESR caps',
+              #    find_file('230222_background.DSC', exp_type = exp_type)['harmonic', 0]),
+              #('230911_Q183_pRbatch230828_rd2.DSC', exp_type, 'Q183 9-11', 'red', 1.9, 370, 'AGs', 'QESR caps',
+              #    find_file('230911_water.DSC', exp_type=exp_type)['harmonic',0]),
+              #('230912_Q183_pRbatch230828_redesalt.DSC', exp_type, 'Q183 9-12', 'blue', 0.8, 143, 'AGs', 'QESR caps',
+              #    find_file('230912_water.DSC', exp_type=exp_type)['harmonic', 0]),
+              #('231031_Q183_pRbatch231016.DSC',exp_type, 'Q183 10-31', 'orangered', 0.5, 325, 'AGs', 'QESR caps',
+              #    find_file('231031_water.DSC', exp_type=exp_type)['harmonic',0]),
+              #('240119_Q183_pRbatch231220.DSC',exp_type, 'Q183 1-19', 'green', 0.5, 220, 'AGs', 'QESR caps',
+              #    find_file('240119_water_3pm.DSC', exp_type=exp_type)['harmonic',0]),
+
+            #}}}
+            #{{{pR - N187
+              #('230921_N187_pRbatch230828.DSC', exp_type, 'N187', 'blue', 0.5, 307, 'AGs', 'QESR caps',
+              #    find_file('230921_water.DSC', exp_type=exp_type)['harmonic',0]),
+              #('230926_N187_pRbatch230828.DSC', exp_type, 'N187', 'green', 0.5, 318, 'AGs', 'QESR caps',
+              #    find_file('230926_water.DSC',exp_type=exp_type)['harmonic',0]),
+              #('231009_N187_pRbatch230828_desalt.DSC',exp_type, 'N187_desalt', 'blue',0.9, 200, 'AGs', 'QESR caps',
+              #    find_file('231009_water_2.DSC',exp_type=exp_type)['harmonic',0]),
+              #('231009_N187_pRbatch230828_freeSL.DSC',exp_type, 'N187_freeSL', 'orange', 0.5, 469.7, 'AGs', 'QESR caps',
+              #    find_file('231009_water_2.DSC',exp_type=exp_type)['harmonic',0]),
+              #('231009_N187_pRbatch230828_redesalted.DSC', exp_type, 'N187_redesalted','green',0.8,169.7,'AGs','QESR caps',
+              #    find_file('231009_water_2.DSC',exp_type=exp_type)['harmonic',0]),
+              #('231101_N187_pRbatch231016.DSC', exp_type, 'N187_11-01','royalblue',0.5, 270, 'AGs', 'QESR caps',
+              #    find_file('231031_water.DSC', exp_type=exp_type)['harmonic',0]),
+              #('231101_N187_pRbatch231016_nofreeSL.DSC', exp_type, 'N187_11-01_PM', 'darkred', 0.5, 150, 'AGs', 'QESR caps',
+              #    find_file('231101_water_6pm.DSC', exp_type=exp_type)['harmonic',0]),
+              #('231113_N187_pRbatch231106.DSC', exp_type, 'N187_11-13', 'blue', 0.5, 181, 'AGs', 'QESR caps',
+              #    find_file('231113_water_better.DSC', exp_type = exp_type)['harmonic', 0]),
+              #('231113_N187_DDM_pRbatch231106.DSC', exp_type, 'N187_11-13_DDM', 'green', 0.5, 241, 'AGs', 'QESR caps',
+              #    find_file('231113_water_better.DSC', exp_type = exp_type)['harmonic', 0]),
+              #('231113_N187_DDM_conc_pRbatch231106.DSC', exp_type, 'N187_11-13_DDM_conc', 'red', 0.5, 320, 'AGs', 'QESR caps',
+              #    None), #find_file('231113_water_better.DSC', exp_type = exp_type)['harmonic', 0]),
+              #('231114_N187_DDM_pRbatch231106_2.DSC', exp_type, 'N187_11-14_DDM_conc', 'blue', 0.5, 560, 'AGs', 'QESR caps',
+              #    find_file('231114_water.DSC', exp_type = exp_type)['harmonic', 0]),
+              #('231114_N187_DDM_pRbatch231106_2_2p5hr.DSC', exp_type, 'N187_11-14_DDM_conc', 'red', 0.5, 560, 'AGs', 'QESR caps',
+              #    find_file('231114_water.DSC', exp_type = exp_type)['harmonic', 0]),
+              #('231114_N187_pRbatch231106_conc.DSC', exp_type, 'N187_11-14_conc','green', 0.5, 960, 'AGs', 'QESR caps',
+              #    find_file('231114_water.DSC', exp_type = exp_type)['harmonic',0]),
+              #('231114_N187_pRbatch231106_conc2.DSC', exp_type, 'N187_11-14_conc2','orangered', 0.5, 1500, 'AGs', 'QESR caps',
+              #    find_file('231114_water.DSC', exp_type = exp_type)['harmonic',0]),
+              #('231114_N187_DDM_pRbatch231106_595uM.DSC', exp_type, 'N187_11-14_DDM_595uM', 'darkgreen', 0.5, 595, 'AGs', 'QESR caps',
+              #    find_file('231114_water.DSC', exp_type = exp_type)['harmonic', 0]),
+              #('231114_N187_pRbatch231106_conc_final.DSC', exp_type, 'N187_11-14_conc', 'orangered', 0.5, 479, 'AGs', 'QESR caps',
+              #    find_file('231114_water.DSC', exp_type = exp_type)['harmonic', 0]),
+              #('240122_N187_pRbatch231220.DSC', exp_type, 'N187 1-22', 'blue', 0.5, 335, 'AGs', 'QESR caps',
+              #    find_file('240122_water.DSC',exp_type=exp_type)['harmonic',0]),  
+
+            #}}}
+            #{{{pR - F195
+              #('230905_F195_pRbatch230814.DSC', exp_type, 'F195 09-05-23', 'red', 0.5, 1377.7, 'AGs', 'QESR caps',
+              #    find_file('230905_water.DSC', exp_type=exp_type)['harmonic',0]),
+              #('231024_F195_pRbatch231016.DSC', exp_type, 'F195 10-24-23', 'darkgreen', 0.5, 370.8, 'AGs', 'QESR caps',
+              #    find_file('231024_water.DSC', exp_type=exp_type)['harmonic',0]),
+              #('231121_F195_pRbatch231106.DSC', exp_type, 'F195_11-21', 'orchid', 0.5, 253.25, 'AGs', 'QESR caps',
+              #    find_file('231121_water.DSC', exp_type=exp_type)['harmonic',0]),
+              #('240112_F195_pRbatch231220.DSC', exp_type, 'F195 1-12-24', 'red', 0.5, 395, 'AGs', 'QESR caps',
+              #    find_file('240112_water.DSC', exp_type=exp_type)['harmonic',0]),
+              #('230912_F195_pRbatch230828_redesalt.DSC', exp_type, 'F195', 'orange',0.5, 300, 'AGs', 'QESR caps',
+              #    find_file('230912_water.DSC',exp_type=exp_type)['harmonic',0]),
+
+            #}}}
+            #{{{pR - F205
+              #('230905_F205_pRbatch230814.DSC', exp_type, 'F205 9-5-2023 1159 uM', 'blue', 0.5, 1159, 'AGs', 'QESR caps',
+              #    find_file('230905_water.DSC', exp_type=exp_type)['harmonic',0]),
+              #('231025_F205_pRbatch231016.DSC', exp_type, 'F205_10-25-23', 'red', 0.5, 114.5, 'AGs', 'QESR caps',
+              #    find_file('231025_water.DSC', exp_type=exp_type)['harmonic',0]),
+              #('231025_F205_pRbatch231016_reconc.DSC', exp_type, 'F205_reconc', 'darkgreen', 0.5, 250, 'AGs', 'QESR caps',
+              #    find_file('231025_water.DSC', exp_type=exp_type)['harmonic',0]),
+              #('240123_F205_pRbatch231220.DSC', exp_type, 'F205 1-23-2024 110 uM', 'green', 0.5, 109, 'AGs', 'QESR caps',
+              #    None), #find_file('240123_water.DSC', exp_type=exp_type)['harmonic',0]),
+
+            #}}}
+            #{{{Ras - E37
+              #('240206_E37_Rasbatch240130.DSC', exp_type, 'E37 2-6-24', 'blue', 0.5, 47, 'AGs', 'QESR caps',
+              #     find_file('240206_water.DSC', exp_type=exp_type)['harmonic',0]),
+              #('240227_E37_Rasbatch240220.DSC', exp_type, 'E37 2-27-24', 'crimson', 0.5, 887, 'AGs', 'QESR caps',
+              #    find_file('240227_water.DSC',exp_type=exp_type)['harmonic',0]),
+              #('240228_E37_Rasbatch240220reg.DSC', exp_type, 'E37 2-28-24', 'blue', 0.5, 400,'AGs', 'QESR caps',
+              #    find_file('240227_water.DSC',exp_type=exp_type)['harmonic',0]),
+              #('240228_E37_Rasbatch240220_1-2dil.DSC', exp_type, 'E37 2-28-24 1:2 dil', 'green', 0.5, 200, 'AGs', 'QESR caps',
+              #    find_file('240227_water.DSC',exp_type=exp_type)['harmonic',0]),
+              #('240330_E37_MTSL_Rasbatch240320_pure.DSC', exp_type, 'E37 3-30-24', 'maroon', 0.5, 46.5, 'AGs', 'QESR caps',
+              #    find_file('240330_water.DSC',exp_type=exp_type)['harmonic',0]), 
+              #('240401_E37_MTSL_Rasbatch240320_pure_reconc.DSC', exp_type, 'E37 4-1-24', 'royalblue', 0.5, 46.5, 'AGs', 'QESR caps',
+              #    None), #find_file('240401_water.DSC', exp_type=exp_type)['harmonic',0]),
+              #('240330_E37_MTSL_Rasbatch240320_frac1.DSC',exp_type, 'E37 fraction 1', 'brown', 0.5, 1, 'AGs', 'QESR caps',
+              #    find_file('240330_water.DSC', exp_type=exp_type)['harmonic',0]),
+              #('240330_E37_MTSL_Rasbatch240320_frac2.DSC', exp_type, 'E37 fraction 2', 'red', 0.5, 1, 'AGs', 'QESR caps',
+              #    find_file('240330_water.DSC', exp_type=exp_type)['harmonic',0]),
+            #}}}
+            #{{{Ras - L56
+              #('240207_L56_Rasbatch240130.DSC', exp_type, 'L56 2-7-24', 'crimson', 0.5, 230, 'AGs', 'QESR caps',
+              #    find_file('240207_water.DSC', exp_type=exp_type)['harmonic',0]),
+              #('240306_L56_MTSL_Rasbatch240220.DSC', exp_type, 'L56 3-6-24', 'purple', 0.5, 2100, 'AGs', 'QESR caps',
+              #    None), #find_file('240306_water.DSC',exp_type=exp_type)['harmonic',0]),
+              #('240306_L56_dil_MTSL_Rasbatch240220.DSC', exp_type, 'L56 dil 3-6-24', 'royalblue', 0.5, 250, 'AGs', 'QESR caps',
+              #    find_file('240306_water_rerun.DSC', exp_type=exp_type)['harmonic',0]),
+              #('240306_L56_dil_MTSL_probeA_Rasbatch240220.DSC', exp_type, 'L56 dil probe A1 3-6-24', 'orangered', 0.5, 585, 'AGs', 'QESR caps',
+              #    find_file('240306_water_rerun.DSC', exp_type=exp_type)['harmonic',0]),
+              #('240306_L56_dil_MTSL_probeB_Rasbatch240220.DSC', exp_type, 'L56 dil probe B1 3-6-24', 'darkgreen', 0.5, 585, 'AGs', 'QESR caps',
+              #    find_file('240306_water_rerun.DSC', exp_type=exp_type)['harmonic',0]),
+              #('240404_L56_MTSL_Rasbatch240320_pure.DSC', exp_type, 'L56 4-4-24 conc', 'darkorange', 0.5, 1390, 'AGs', 'QESR caps',
+              #    find_file('240404_water.DSC',exp_type=exp_type)['harmonic',0]),
+              #('240404_L56_MTSL_Rasbatch240320_pure-diluted.DSC', exp_type, 'L56 4-4-24 dil', 'royalblue', 0.5, 260, 'AGs', 'QESR caps',
+              #    find_file('240404_water.DSC',exp_type=exp_type)['harmonic',0]),
+              #('240404_L56_MTSL_Rasbatch240320_pure.DSC',exp_type, 'L56 4-5-24', 'darkgreen', 0.5, 174, 'AGs', 'QESR caps',
+              #    find_file('240404_water.DSC', exp_type=exp_type)['harmonic',0]),
+              #('240404_L56_MTSL_Rasbatch240320_fraction1.DSC', exp_type, 'L56 fraction 1', 'brown', 0.5, 1, 'AGs', 'QESR caps',
+              #    find_file('240404_water.DSC', exp_type=exp_type)['harmonic',0]),
+              #('240404_L56_MTSL_Rasbatch240320_fraction2.DSC', exp_type, 'L56 fraction 2', 'red', 0.5, 1, 'AGs', 'QESR caps',
+              #    find_file('240404_water.DSC', exp_type=exp_type)['harmonic',0]),
+              #('240404_L56_MTSL_Rasbatch240320_fraction3.DSC', exp_type, 'L56 fraction 3', 'darkorange', 0.5, 1, 'AGs', 'QESR caps',
+              #    find_file('240404_water.DSC', exp_type=exp_type)['harmonic',0]),
+              #('240404_L56_MTSL_Rasbatch240320_fraction4.DSC', exp_type, 'L56 fraction 4', 'gold', 0.5, 1, 'AGs', 'QESR caps',
+              #    find_file('240404_water.DSC', exp_type=exp_type)['harmonic',0]),
+              #('240404_L56_MTSL_Rasbatch240320_fraction5.DSC', exp_type, 'L56 fraction 5', 'olive', 0.5, 1, 'AGs', 'QESR caps',
+              #    find_file('240404_water.DSC', exp_type=exp_type)['harmonic',0]),
+              #('240404_L56_MTSL_Rasbatch240320_fraction6.DSC', exp_type, 'L56 fraction 6', 'darkgreen', 0.5, 1, 'AGs', 'QESR caps',
+              #    find_file('240404_water.DSC', exp_type=exp_type)['harmonic',0]),
+              #('240404_L56_MTSL_Rasbatch240320_fraction7.DSC', exp_type, 'L56 fraction 7', 'darkcyan', 0.5, 1, 'AGs', 'QESR caps',
+              #    find_file('240404_water.DSC', exp_type=exp_type)['harmonic',0]),
+              #('240404_L56_MTSL_Rasbatch240320_fraction8.DSC', exp_type, 'L56 fraction 8', 'dodgerblue', 0.5, 1, 'AGs', 'QESR caps',
+              #    find_file('240404_water.DSC', exp_type=exp_type)['harmonic',0]),
+              #('240404_L56_MTSL_Rasbatch240320_fraction9.DSC', exp_type, 'L56 fraction 9', 'darkblue', 0.5, 1, 'AGs', 'QESR caps',
+              #    find_file('240404_water.DSC', exp_type=exp_type)['harmonic',0]),
+              #('240404_L56_MTSL_Rasbatch240320_fraction10.DSC', exp_type, 'L56 fraction 10', 'darkviolet', 0.5, 1, 'AGs', 'QESR caps',
+              #    find_file('240404_water.DSC', exp_type=exp_type)['harmonic',0]),
+              #('240404_L56_MTSL_Rasbatch240320_fraction11.DSC', exp_type, 'L56 fraction 11', 'darkmagenta', 0.5, 1, 'AGs', 'QESR caps',
+              #    find_file('240404_water.DSC', exp_type=exp_type)['harmonic',0]),
+              #('240404_L56_MTSL_Rasbatch240320_fraction12.DSC', exp_type, 'L56 fraction 12', 'deeppink', 0.5, 1, 'AGs', 'QESR caps',
+              #    find_file('240404_water.DSC', exp_type=exp_type)['harmonic',0]),
+            #}}}
+            #{{{Ras - M67
+              #('240405_M67_MTSL_Rasbatch240320_pure.DSC', exp_type, 'N187 1-22', 'blue', 0.5, 335, 'AGs', 'QESR caps',
+              #   find_file('240405_water.DSC',exp_type=exp_type)['harmonic',0]),  
+              #('240213_M67_Rasbatch240130.DSC',exp_type, 'M67 2-13-24', 'purple', 0.5, 65.6, 'AGs', 'QESR caps',
+              #    None), #find_file('240213_water.DSC', exp_type=exp_type)['harmonic',0]),
+              #('240305_M67_6-MSL_Rasbatch240220.DSC', exp_type, 'M67 3-5-24','green', 0.5, 30, 'AGs', 'QESR caps',
+              #    find_file('240305_water.DSC', exp_type=exp_type)['harmonic',0]),
+              #('240405_M67_MTSL_Rasbatch240320_pure.DSC', exp_type, 'M67 4-5-24', 'green', 0.5, 558.9, 'AGs', 'QESR caps',
+              #    find_file('240405_water.DSC',exp_type=exp_type)['harmonic',0]),
+              #('240405_M67_MTSL_Rasbatch240320_pure-dil.DSC', exp_type, 'M67 4-5-24 dil', 'royalblue', 0.5, 260, 'AGs', 'QESR caps',
+              #    find_file('240405_water.DSC', exp_type=exp_type)['harmonic',0]),
+              #('240408_M67_MTSL_Rasbatch240320.DSC', exp_type, 'M67 4-8-24', 'darkorange',0.5, 250, 'AGs', 'QESR caps',
+              #    find_file('240408_water.DSC',exp_type=exp_type)['harmonic',0]),  
+              #('240408_M67_MTSL_Rasbatch240320_probeA.DSC', exp_type, 'M67 probe A 250 uM', 'gold', 0.5, 250, 'AGs', 'QESR caps',
+              #    find_file('240408_water.DSC', exp_type=exp_type)['harmonic',0]),
+              #('240408_M67_MTSL_Rasbatch240320_probeB.DSC', exp_type, 'M67 probe B 250 uM', 'dodgerblue', 0.5, 250, 'AGs', 'QESR caps',
+              #    find_file('240408_water.DSC', exp_type=exp_type)['harmonic',0]),
+            #}}}
+            #{{{Ras - L118
+              #('240228_L118_Rasbatch240220.DSC', exp_type, 'L118 2-28-24', 'darkmagenta', 0.5, 255.5, 'AGs', 'QESR caps',
+              #    find_file('240228_water.DSC', exp_type=exp_type)['harmonic',0]),
+              #('240228_L118_Aprobe_Rasbatch240220.DSC',exp_type, 'L118 probe A', 'darkorange', 0.5, 256, 'AGs', 'QESR caps',
+              #    find_file('240228_water.DSC', exp_type=exp_type)['harmonic',0]),
+              #('240228_L118_Bprobe_Rasbatch240220.DSC',exp_type, 'L118 probe B', 'royalblue', 0.5, 256, 'AGs', 'QESR caps',
+              #    find_file('240228_water.DSC', exp_type=exp_type)['harmonic',0]),
+              #('240401_L118_6-MSL_Rasbatch240320.DSC', exp_type, 'L118 4-1-24', 'darkgreen', 0.1, 20, 'AGs', 'QESR caps',
+              #    None), #find_file('240330_water.DSC', exp_type=exp_type)['harmonic',0]),
+            #}}}
+            #{{{Ras - L159
+              #('240214_L159_Rasbatch240130.DSC',exp_type, 'L159 2-14', 'green', 0.5, 11, 'AGs', 'QESR caps',
+              #    None), #find_file('240214_water.DSC', exp_type=exp_type)['harmonic',0]),
+
+            #}}}
+            
+              #('220720_stock_2.DSC',70.0,'TGA stock 2',0.5, '220720','QESR caps',
+              #    find_file('220720_background.DSC',exp_type=exp_type)['harmonic',0]),
+              #('231115_S184_pRbatch231106.DSC', exp_type, 'S184 11-15', 'green', 0.5, 712.2, 'AGs', 'QESR caps',
+              #    find_file('231115_water_mc.DSC', exp_type = exp_type)['harmonic',0]),
+              #('230501_pR_batch230329_S184.DSC', exp_type, 'S184 5-1', 'darkred',0.5, 514.6, 'AGs', 'QESR caps',
+              #    find_file('230501_water_500.DSC', exp_type = exp_type)['harmonic', 0]),
+              #('231120_T177_pRbatch231106.DSC', exp_type, 'T177_11-20', 'royalblue', 0.5, 159, 'AGs', 'QESR caps',
+              #    find_file('231120_water.DSC', exp_type = exp_type)['harmonic', 0]),
+              #('230222_batch230130_pR_T177.DSC',exp_type, 'T177_2-22', 'red', 0.5, 795, 'AGs', 'QESR caps',
+              #    find_file('230222_background.DSC', exp_type=exp_type)['harmonic',0]),
+              #('220927_pRS184_MTSL.DSC', exp_type, 'S184 9-27-22', 'gold', 0.5, 400, 'AGs', 'QESR caps',
+              #    None), #find_file('background.DSC', exp_type=exp_type)['harmonic',0]),
+              #('230222_pR_batch230130_pR_S184.DSC', exp_type, 'S184 2-22', 'blue',0.5, 200, 'AGs', 'QESR caps',
+              #    find_file('230222_background.DSC', exp_type = exp_type)['harmonic', 0]),
+              #('230905_F195_pRbatch230814.DSC', exp_type, 'F195 09-05-23', 'red', 0.5, 1377.7, 'AGs', 'QESR caps',
+              #    find_file('230905_water.DSC', exp_type=exp_type)['harmonic',0]),
+              #('231024_F195_pRbatch231016.DSC', exp_type, 'F195 10-24-23', 'darkgreen', 0.5, 370.8, 'AGs', 'QESR caps',
+              #    find_file('231024_water.DSC', exp_type=exp_type)['harmonic',0]),
+              #('231121_F195_pRbatch231106.DSC', exp_type, 'F195_11-21', 'orchid', 0.5, 253.25, 'AGs', 'QESR caps',
+              #    find_file('231121_water.DSC', exp_type=exp_type)['harmonic',0]),
+              #('240112_F195_pRbatch231220.DSC', exp_type, 'F195 1-12-24', 'red', 0.5, 395, 'AGs', 'QESR caps',
+              #    find_file('240112_water.DSC', exp_type=exp_type)['harmonic',0]),
+              #('230905_F205_pRbatch230814.DSC', exp_type, 'F205 9-5-2023 1159 uM', 'blue', 0.5, 1159, 'AGs', 'QESR caps',
+              #    find_file('230905_water.DSC', exp_type=exp_type)['harmonic',0]),
+              #('231025_F205_pRbatch231016.DSC', exp_type, 'F205_10-25-23', 'red', 0.5, 114.5, 'AGs', 'QESR caps',
+              #    find_file('231025_water.DSC', exp_type=exp_type)['harmonic',0]),
+              #('231025_F205_pRbatch231016_reconc.DSC', exp_type, 'F205_reconc', 'darkgreen', 0.5, 250, 'AGs', 'QESR caps',
+              #    find_file('231025_water.DSC', exp_type=exp_type)['harmonic',0]),
+              #('240123_F205_pRbatch231220.DSC', exp_type, 'F205 1-23-2024 110 uM', 'green', 0.5, 109, 'AGs', 'QESR caps',
+              #    None), #find_file('240123_water.DSC', exp_type=exp_type)['harmonic',0]),
+              
+              #('240206_E37_Rasbatch240130.DSC', exp_type, 'E37 2-6-24', 'blue', 0.5, 47, 'AGs', 'QESR caps',
+              #     find_file('240206_water.DSC', exp_type=exp_type)['harmonic',0]),
+              #('240227_E37_Rasbatch240220.DSC', exp_type, 'E37 2-27-24', 'crimson', 0.5, 887, 'AGs', 'QESR caps',
+              #    find_file('240227_water.DSC',exp_type=exp_type)['harmonic',0]),
+              #('240228_E37_Rasbatch240220reg.DSC', exp_type, 'E37 2-28-24', 'blue', 0.5, 400,'AGs', 'QESR caps',
+              #    find_file('240227_water.DSC',exp_type=exp_type)['harmonic',0]),
+              #('240228_E37_Rasbatch240220_1-2dil.DSC', exp_type, 'E37 2-28-24 1:2 dil', 'green', 0.5, 200, 'AGs', 'QESR caps',
+              #    find_file('240227_water.DSC',exp_type=exp_type)['harmonic',0]),
+              #('240330_E37_MTSL_Rasbatch240320_pure.DSC', exp_type, 'E37 3-30-24', 'maroon', 0.5, 50, 'AGs', 'QESR caps',
+              #    find_file('240330_water.DSC',exp_type=exp_type)['harmonic',0]), 
+              #('240401_E37_MTSL_Rasbatch240320_pure_reconc.DSC', exp_type, 'E37 4-1-24', 'royalblue', 0.5, 0.2, 'AGs', 'QESR caps',
+              #    None) #find_file('240401_water.DSC', exp_type=exp_type)['harmonic',0]),
+              #('240207_L56_Rasbatch240130.DSC', exp_type, 'L56 2-7-24', 'crimson', 0.5, 230, 'AGs', 'QESR caps',
+              #    find_file('240207_water.DSC', exp_type=exp_type)['harmonic',0]),
+              #('240306_L56_MTSL_Rasbatch240220.DSC', exp_type, 'L56 3-6-24', 'purple', 0.5, 2100, 'AGs', 'QESR caps',
+              #    None), #find_file('240306_water.DSC',exp_type=exp_type)['harmonic',0]),
+              #('240306_L56_dil_MTSL_Rasbatch240220.DSC', exp_type, 'L56 dil 3-6-24', 'royalblue', 0.5, 250, 'AGs', 'QESR caps',
+              #    find_file('240306_water_rerun.DSC', exp_type=exp_type)['harmonic',0]),
+              #('240306_L56_dil_MTSL_probeA_Rasbatch240220.DSC', exp_type, 'L56 dil probe A1 3-6-24', 'orangered', 0.5, 585, 'AGs', 'QESR caps',
+              #    find_file('240306_water_rerun.DSC', exp_type=exp_type)['harmonic',0]),
+              #('240306_L56_dil_MTSL_probeB_Rasbatch240220.DSC', exp_type, 'L56 dil probe B1 3-6-24', 'darkgreen', 0.5, 585, 'AGs', 'QESR caps',
+              #    find_file('240306_water_rerun.DSC', exp_type=exp_type)['harmonic',0]),
+              #('240213_M67_Rasbatch240130.DSC',exp_type, 'M67 2-13-24', 'purple', 0.5, 65.6, 'AGs', 'QESR caps',
+              #    None), #find_file('240213_water.DSC', exp_type=exp_type)['harmonic',0]),
+              #('240305_M67_6-MSL_Rasbatch240220.DSC', exp_type, 'M67 3-5-24','green', 0.5, 30, 'AGs', 'QESR caps',
+              #    find_file('240305_water.DSC', exp_type=exp_type)['harmonic',0]),
+              #('240214_L159_Rasbatch240130.DSC',exp_type, 'L159 2-14', 'green', 0.5, 11, 'AGs', 'QESR caps',
+              #    None), #find_file('240214_water.DSC', exp_type=exp_type)['harmonic',0]),
+              
+              #('240228_L118_Rasbatch240220.DSC', exp_type, 'L118 2-28-24', 'darkmagenta', 0.5, 255.5, 'AGs', 'QESR caps',
+              #    find_file('240228_water.DSC', exp_type=exp_type)['harmonic',0]),
+              #('240228_L118_Aprobe_Rasbatch240220.DSC',exp_type, 'L118 probe A', 'darkorange', 0.5, 256, 'AGs', 'QESR caps',
+              #    find_file('240228_water.DSC', exp_type=exp_type)['harmonic',0]),
+              #('240228_L118_Bprobe_Rasbatch240220.DSC',exp_type, 'L118 probe B', 'royalblue', 0.5, 256, 'AGs', 'QESR caps',
+              #    find_file('240228_water.DSC', exp_type=exp_type)['harmonic',0]),
+              #('240401_L118_6-MSL_Rasbatch240320.DSC', exp_type, 'L118 4-1-24', 'darkgreen', 0.1, 20, 'AGs', 'QESR caps',
+              #    None), #find_file('240330_water.DSC', exp_type=exp_type)['harmonic',0]),
+              #('230911_Q183_pRbatch230828_rd2.DSC', exp_type, 'Q183 9-11', 'red', 1.9, 370, 'AGs', 'QESR caps',
+              #    find_file('230911_water.DSC', exp_type=exp_type)['harmonic',0]),
+              #('230912_Q183_pRbatch230828_redesalt.DSC', exp_type, 'Q183 9-12', 'blue', 0.8, 143, 'AGs', 'QESR caps',
+              #    find_file('230912_water.DSC', exp_type=exp_type)['harmonic', 0]),
+              #('231031_Q183_pRbatch231016.DSC',exp_type, 'Q183 10-31', 'orangered', 0.5, 325, 'AGs', 'QESR caps',
+              #    find_file('231031_water.DSC', exp_type=exp_type)['harmonic',0]),
+              #('240119_Q183_pRbatch231220.DSC',exp_type, 'Q183 1-19', 'green', 0.5, 220, 'AGs', 'QESR caps',
+              #    find_file('240119_water_3pm.DSC', exp_type=exp_type)['harmonic',0]),
+              
+              #('230912_F195_pRbatch230828_redesalt.DSC', exp_type, 'F195', 'orange',0.5, 300, 'AGs', 'QESR caps',
+              #    find_file('230912_water.DSC',exp_type=exp_type)['harmonic',0]),
+              
+              #('230921_N187_pRbatch230828.DSC', exp_type, 'N187', 'blue', 0.5, 307, 'AGs', 'QESR caps',
+              #    find_file('230921_water.DSC', exp_type=exp_type)['harmonic',0]),
+              #('230926_N187_pRbatch230828.DSC', exp_type, 'N187', 'green', 0.5, 318, 'AGs', 'QESR caps',
+              #    find_file('230926_water.DSC',exp_type=exp_type)['harmonic',0]),
+              #('231009_N187_pRbatch230828_desalt.DSC',exp_type, 'N187_desalt', 'blue',0.9, 200, 'AGs', 'QESR caps',
+              #    find_file('231009_water_2.DSC',exp_type=exp_type)['harmonic',0]),
+              #('231009_N187_pRbatch230828_freeSL.DSC',exp_type, 'N187_freeSL', 'orange', 0.5, 469.7, 'AGs', 'QESR caps',
+              #    find_file('231009_water_2.DSC',exp_type=exp_type)['harmonic',0]),
+              #('231009_N187_pRbatch230828_redesalted.DSC', exp_type, 'N187_redesalted','green',0.8,169.7,'AGs','QESR caps',
+              #    find_file('231009_water_2.DSC',exp_type=exp_type)['harmonic',0]),
+              #('231101_N187_pRbatch231016.DSC', exp_type, 'N187_11-01','royalblue',0.5, 270, 'AGs', 'QESR caps',
+              #    find_file('231031_water.DSC', exp_type=exp_type)['harmonic',0]),
+              #('231101_N187_pRbatch231016_nofreeSL.DSC', exp_type, 'N187_11-01_PM', 'darkred', 0.5, 150, 'AGs', 'QESR caps',
+              #    find_file('231101_water_6pm.DSC', exp_type=exp_type)['harmonic',0]),
+              #('231113_N187_pRbatch231106.DSC', exp_type, 'N187_11-13', 'blue', 0.5, 181, 'AGs', 'QESR caps',
+              #    find_file('231113_water_better.DSC', exp_type = exp_type)['harmonic', 0]),
+              #('231113_N187_DDM_pRbatch231106.DSC', exp_type, 'N187_11-13_DDM', 'green', 0.5, 241, 'AGs', 'QESR caps',
+              #    find_file('231113_water_better.DSC', exp_type = exp_type)['harmonic', 0]),
+              #('231113_N187_DDM_conc_pRbatch231106.DSC', exp_type, 'N187_11-13_DDM_conc', 'red', 0.5, 320, 'AGs', 'QESR caps',
+              #    None), #find_file('231113_water_better.DSC', exp_type = exp_type)['harmonic', 0]),
+              #('231114_N187_DDM_pRbatch231106_2.DSC', exp_type, 'N187_11-14_DDM_conc', 'blue', 0.5, 560, 'AGs', 'QESR caps',
+              #    find_file('231114_water.DSC', exp_type = exp_type)['harmonic', 0]),
+              #('231114_N187_DDM_pRbatch231106_2_2p5hr.DSC', exp_type, 'N187_11-14_DDM_conc', 'red', 0.5, 560, 'AGs', 'QESR caps',
+              #    find_file('231114_water.DSC', exp_type = exp_type)['harmonic', 0]),
+              #('231114_N187_pRbatch231106_conc.DSC', exp_type, 'N187_11-14_conc','green', 0.5, 960, 'AGs', 'QESR caps',
+              #    find_file('231114_water.DSC', exp_type = exp_type)['harmonic',0]),
+              #('231114_N187_pRbatch231106_conc2.DSC', exp_type, 'N187_11-14_conc2','orangered', 0.5, 1500, 'AGs', 'QESR caps',
+              #    find_file('231114_water.DSC', exp_type = exp_type)['harmonic',0]),
+              #('231114_N187_DDM_pRbatch231106_595uM.DSC', exp_type, 'N187_11-14_DDM_595uM', 'darkgreen', 0.5, 595, 'AGs', 'QESR caps',
+              #    find_file('231114_water.DSC', exp_type = exp_type)['harmonic', 0]),
+              #('231114_N187_pRbatch231106_conc_final.DSC', exp_type, 'N187_11-14_conc', 'orangered', 0.5, 479, 'AGs', 'QESR caps',
+              #    find_file('231114_water.DSC', exp_type = exp_type)['harmonic', 0]),
+              #('240122_N187_pRbatch231220.DSC', exp_type, 'N187 1-22', 'blue', 0.5, 335, 'AGs', 'QESR caps',
+              #    find_file('240122_water.DSC',exp_type=exp_type)['harmonic',0]),  
+              
+              #Stopping here for now
+              #('230901_F205_pRbatch230814_fraction1.DSC', exp_type, 'F205_fraction1', 'maroon', 0.5, 10, 'AGs', 'QESR caps',
+              #    None),
+              #    find_file('230823_water.DSC', exp_type=exp_type)['harmonic',0]),
+              #('230901_F205pRbatch230814_fraction2.DSC', exp_type, 'F205_fraction2', 'red', 0.5, 10, 'AGs', 'QESR caps',
+              #    None),
+              #    find_file('230823_water.DSC', exp_type=exp_type)['harmonic',0]),
+              #('230901_F205_pRbatch230814_fraction3.DSC', exp_type, 'F205_fraction3', 'gold', 0.5, 10, 'AGs', 'QESR caps',
+              #    None),
+              #    find_file('230823_water.DSC', exp_type=exp_type)['harmonic',0]),
+              #('230901_F205_pRbatch230814_fraction4.DSC', exp_type, 'F205_fraction4', 'darkgreen', 0.5,10, 'AGs', 'QESR caps',
+              #    None),
+              #    find_file('230823_water.DSC', exp_type=exp_type)['harmonic',0]),
+              #('230901_F205_pRbatch230814_fraction5.DSC', exp_type, 'F205_fraction5', 'steelblue', 0.5,10, 'AGs', 'QESR caps',
+              #    None),
+              #    find_file('230823_water.DSC', exp_type=exp_type)['harmonic',0]),
+              #('230901_F205_pRbatch230814_fraction6.DSC', exp_type, 'F205_fraction6', 'darkmagenta', 0.5,10, 'AGs', 'QESR caps',
+              #    None),
+              #    find_file('230823_water.DSC', exp_type=exp_type)['harmonic',0]),
+              #('230823_Q183_fraction6_changedparams.DSC', exp_type, 'Q183_fraction6_cp', 'olive', 0.5,10, 'AGs', 'QESR caps',
+              #    find_file('230823_water.DSC', exp_type=exp_type)['harmonic',0]),
+              #('230823_Q183_fraction7_changedparams.DSC', exp_type, 'Q183_fraction7_cp', 'darkgreen', 0.5,10, 'AGs', 'QESR caps',
+              #    find_file('230823_water.DSC', exp_type=exp_type)['harmonic',0]),
+              #('230823_Q183_fraction8_chparams.DSC', exp_type, 'Q183_fraction8_cp', 'darkcyan', 0.5,10, 'AGs', 'QESR caps',
+              #    find_file('230823_water.DSC', exp_type=exp_type)['harmonic',0]),
+              #('230823_Q183_fraction9_chparams.DSC', exp_type, 'Q183_fraction9_cp', 'blue', 0.5,10, 'AGs', 'QESR caps',
+              #    find_file('230823_water.DSC', exp_type=exp_type)['harmonic',0]),
+              #('230823_Q183_flowthrough_post1wash.DSC', exp_type, 'Q183_flowthrough_post1wash', 'darkmagenta', 0.5,10, 'AGs', 'QESR caps',
+              #    find_file('230823_water.DSC', exp_type=exp_type)['harmonic',0]),
+              #('230615_Q183_pRbatch230605_desalt.DSC', exp_type, 'Q183 6-15', 'crimson', 0.5, 111,'AGs','QESR caps',
+              #    find_file('230615_water.DSC',exp_type=exp_type)['harmonic',0]),
+              #('230621_F195_pRbatch230605.DSC',exp_type, 'F195_conc 06-21-23','orange',0.5, 2936.9, 'AGs', 'QESR caps',
+              #    find_file('230621_water.DSC',exp_type=exp_type)['harmonic',0]),
+              #('230706_M67_Rasbatch230627_reconc.DSC',exp_type,'Ras M67 reconc','orange',0.5,114,'AGs','QESR caps',
+              #    find_file('230706_water.DSC',exp_type=exp_type)['harmonic',0]),
+              #('230711_I36_Rasbatch230627.DSC', exp_type, 'Ras I36', 'blue',0.5,40,'AGs', 'QESR caps',
+              #    find_file('230711_water.DSC',exp_type=exp_type)['harmonic',0]),
+              #('230711_I36_Rasbatch230627_2.DSC', exp_type, 'Ras I36_2', 'seagreen',0.5,150,'AGs', 'QESR caps',
+              #    find_file('230711_water.DSC',exp_type=exp_type)['harmonic',0]),
+              #('230711_K104_Rasbatch230627.DSC',exp_type, 'Ras K104','crimson',0.5,250,'AGs','QESR caps',
+              #    find_file('230711_water.DSC',exp_type=exp_type)['harmonic',0]),
+              #('230706_E37_Rasbatch230627.DSC',exp_type,'Ras E37','blue',0.5,6,'AGs','QESR caps',
+              #    find_file('230706_water.DSC',exp_type=exp_type)['harmonic',0]),
+              #('230706_E37_Rasbatch230627_3.DSC',exp_type,'Ras E37 reconc3','lime',0.5,35,'AGs','QESR caps',
+              #    find_file('230706_water.DSC',exp_type=exp_type)['harmonic',0]),
+              #('230706_E37_Rasbatch230627_4.DSC',exp_type,'Ras E37 reconc4','darkorchid',0.5,30.8,'AGs','QESR caps',
+              #    find_file('230706_water.DSC',exp_type=exp_type)['harmonic',0]),
+              #('230621_F205_pRbatch230605_1-2dilution.DSC',exp_type,'F205_1:2dilution','darkorchid',0.5,1213,'AGs','QESR caps',
+              #    find_file('230621_water.DSC',exp_type=exp_type)['harmonic',0]),
+              #('230612_N187_pRbatch230605_pm.DSC', exp_type, 'N187 202 uM', 'orange',0.2, 200, 'AGs','QESR caps',
+                  #find_file('230612_water.DSC',exp_type=exp_type)['harmonic',0]),
+              #('230612_Q183_pRbatch230605_pm.DSC',exp_type,'Q183 6-12','blue',0.2, 1125,'AGs','QESR caps',
+              #    find_file('230612_water.DSC',exp_type=exp_type)['harmonic',0]),
+              #('230612_Q183_pRbatch230605.DSC',exp_type,'135 uM', 'blue',0.2, 1038.1508, 'AGs','QESR caps',
+              #    find_file('230612_water.DSC',exp_type=exp_type)['harmonic',0]),
+              ]):
+        d = find_file(thisfile,exp_type = exp_type)
+        d -= d[fieldaxis, -100:].data.mean()
+        if "harmonic" in d.dimlabels:
+            d = d['harmonic',0]
+        color = thiscolor
+        fl.next("Raw QESR")
+        fl.plot(d,color=color, label=thislabel,alpha = 0.5)
+        rescaled = d.C
+        fl.next("Rescaled")
+        d /= QESR_scalefactor(d, calibration_name = calibration,
+                diameter_name = diameter)
+        d -= d[fieldaxis, -100:].data.mean()
+        fl.plot(d,color=color,label=thislabel)
+        if plot_rescaled:
+            new_d = d.C
+            new_d /= concscale
+            fl.next('Rescaled and divided by estimated QESR')
+            fl.plot(new_d,label = '%s - divided by %0.4f'%(thislabel,concscale))
+        norm_d = d.C
+        center_field = norm_d.C.argmax().item()#norm_d.getaxis(fieldaxis)[r_[0,-1]].mean()
+        norm_d.setaxis(fieldaxis, lambda x:x-center_field)
+        dmax = norm_d.C.max()
+        dmin = norm_d.C.min()
+        delta_d = dmax-dmin
+        norm_d /= delta_d
+        fl.next('Normalized')
+        fl.plot(norm_d, color=color,label=thislabel)
+        if plot_rescaled:
+            pass
+        else:
+            c = protein_QESR(thisfile, label=thislabel, pushout=pushout,
+                    exp_type = exp_type,
+                    color = color,
+                    calibration_name = calibration,
+                    diameter_name = diameter,
+                    background =  background,
+                    which_plot = 'compare',
+                    pickle_file = "240415_TEMPOL_650_uM.pickle",
+                    fl = fl)
+        #all_conc.append(c)
+    #allconcs = np.array(all_conc)
+    #ax = gca()
+    #text(0.5,0.5,'$%0.2f\\pm%0.2f$'%(np.mean(allconcs), np.std(allconcs, ddof=1)/sqrt(len(allconcs))), transform = ax.transAxes)
+
+

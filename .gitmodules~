@@ -1,0 +1,3 @@
+[submodule "RS_Notebook/inprocess/shared"]
+	path = RS_Notebook/inprocess/shared
+	url = git@github.com:jmfrancklab/shared_protocol_run.git

@@ -36,7 +36,7 @@ with figlist_var() as fl:
         fl.plot(d,color=color, label=thislabel,alpha = 1)
         rescaled = d.C
         fl.next("Rescaled")
-        d /= QESR_scalefactor(d, calibration_name = calibration,
+        d /= QESR_apply_scalefactor(d, calibration_name = calibration,
                 diameter_name = diameter)
         d -= d[fieldaxis, -100:].data.mean()
         d += const

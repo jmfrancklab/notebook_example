@@ -192,7 +192,7 @@ for thiskey, thisval in data["yoshioka"]["digitized"].items():
     # following above reasoning, we just want log of τ
     tau_aq = 1/(1/(tau)-1/(tau_T_RM*T))
     plt.plot(1000 / T, np.log10(tau_aq), label =r"$\tau_{aq}$ for"+thiskey)
-plt.ylabel(r"$\log(\tau_c T / \mathrm{s} \cdot \mathrm{K})$")
+plt.ylabel(r"$\log(\tau_c / \mathrm{s} \cdot \mathrm{K})$")
 plt.xlabel(r"1000 K / $T$")
 plt.legend()
 
