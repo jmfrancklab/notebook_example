@@ -6,4 +6,6 @@ auto_figures/
 *.pdf
 *.upa
 *.upb
+*.csv
 scripts/
+

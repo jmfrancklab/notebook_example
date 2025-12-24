@@ -1,0 +1,87 @@
+Date: 250402
+Sample: 20 mM TEMPO-SO4 in isooctane w0=20
+
+Temperature: 333K
+Start time: 5:22:30 pm
+end time: 5:32:00 pm
+Filename: 250402_20mM_TSO4_C8_W20_ThickID_333K.DSC
+
+Temperature: 330K
+Start time: 5:33:10 pm
+end time: 5:46:40 pm
+Filename: 250402_20mM_TSO4_C8_W20_ThickID_330K.DSC
+
+Temperature: 325K
+Start time: 5:48:00 pm
+end time: 5:59:34 pm
+Filename: 250402_20mM_TSO4_C8_W20_ThickID_325K.DSC
+
+Temperature: 320K
+Start time: 6:00:40 pm
+end time: 6:11:45 pm
+Filename: 250402_20mM_TSO4_C8_W20_ThickID_320K.DSC
+
+Temperature: 315K
+Start time: 6:13:18 pm
+end time: 6:28:04 pm
+Filename: 250402_20mM_TSO4_C8_W20_ThickID_315K.DSC
+
+Temperature: 310K
+Start time: 6:30:14 pm
+end time: 6:45:05 pm
+Filename: 250402_20mM_TSO4_C8_W20_ThickID_310K.DSC
+
+Temperature: 305K
+Start time: 6:46:03 pm
+end time: 7:00:38 pm
+Filename: 250402_20mM_TSO4_C8_W20_ThickID_305K.DSC
+
+Temperature: 300K
+Start time: 7:02:22 pm
+end time: 7:21:40 pm
+Filename: 250402_20mM_TSO4_C8_W20_ThickID_300K.DSC
+
+Temperature: 295K
+Start time: 7:22:50 pm
+end time: 7:34:57 pm
+Filename: 250402_20mM_TSO4_C8_W20_ThickID_295K.DSC
+
+Temperature: 290K
+Start time: 7:36:01 pm
+end time: 7:45:59 pm
+Filename: 250402_20mM_TSO4_C8_W20_ThickID_290K.DSC
+
+Temperature: 285K
+Start time: 7:47:06 pm
+end time: 7:53:24 pm
+Filename: 250402_20mM_TSO4_C8_W20_ThickID_285K.DSC
+
+Temperature: 280K
+Start time: 7:54:50 pm
+end time: 8:00:41 pm
+Filename: 250402_20mM_TSO4_C8_W20_ThickID_280K.DSC
+
+Temperature: 275K to 245K
+Start time: 8:04:26 pm
+end time: 10:21:44 pm
+Filename: 250402_20mM_TSO4_C8_W20_ThickID_275K_245K.DSC
+
+Temperature: 245K to 222K
+Start time: 10:22:40 pm
+end time: 11:26:10 pm
+Filename: 250402_20mM_TSO4_C8_W20_ThickID_245K_222K.DSC
+
+# Reheating
+
+Temperature: 222K to 300K
+Start time: 11:27 pm (approx)
+end time: 12:26:08 pm
+Filename: 250402_20mM_TSO4_C8_W20_ThickID_Reheat_222K_300K.DSC
+
+
+
+
+
+
+
+

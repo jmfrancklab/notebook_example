@@ -1,0 +1,576 @@
+\section{Notes for Fitting ESR Spectra from Small SP inside RM}
+\subsection{Best way to fit multicomponent spectra}
+Evaluate both the Altenbach program and
+EasySpin and figure out which is the best to
+use for fitting multicomponent spectra, as
+for RS's RM project
+\o[11/20/24 16:06]{at this point, we like the efficiency of altenbach's program, but the fact that the fits are not bounded is highly problematic.}
+
+\subsubsection{install Altenbach program}\label{sec:JFaltenbach}
+\paragraph{first attempt}
+RS having trouble with Altenbach, so install myself and use to fit the
+data she's having trouble with
+\par
+\o[8/9/24 15:19]{downloaded}
+\begin{err}
+    \o[8/9/24 15:19]{locked myself out of EDA with password issue}
+    \o{this was installed}
+\end{err}
+get the location of the data from her
+\o{$\checkmark$}
+make ipynb to convert to a csv file (got this from \texttt{tiffany_data_170905}):
+\begin{verbatim}
+pd = DataFrame(data=d.data,
+    index=d['$B_0$'],
+    columns=['signal'])
+pd.index.name = 'Field [G]'
+pd.to_csv('filename.csv')
+\end{verbatim}
+\o[8/12 09:04]{did this and made \texttt{RS_multicomp_export_240812.ipynb}}
+and see if I can load it into Altenbach
+\o[8/12 09:06]{doesn't work with normal CSV}
+\o[8/12 09:22]{got it to work, fit and saved the .fit file}
+\o[8/12 09:40]{note that increasing the tensor components for the potential seems to really allow changes to the shape of the right dip}
+figure out how to save the components to use as a starting point for the next fit
+-- may need to look at \cite{Pan2021SitSpiLab} 
+\o[8/12 11:15]{a lot of time trying to figure out how to parse the settings file -- no success!}
+\o[8/12 11:15]{did fine ``accept all'' on the parameters $\rightarrow$ global settings page!}
+try fitting
+\o[8/12 11:24]{just by letting the tilt angles and tensors vary, I get some reasonable value -- in ipynb labeled as \texttt{goodfit}}
+\o[8/12 11:44]{I also allowed higher order potential terms -- \texttt{goodfit_many}}
+starting from smaller set (goodfit), set magnetic tilt to zero (fixed) and try again (Budil 2015 says this is usually a good assumpation)
+-- try this with two components, and see if I can fit both left peak and the right inflection
+\o[8/12 12:16]{looks like this works best with multiple A tensors}
+save as \texttt{multiA}
+\o{$\checkmark$ did this and sent to RS}
+see if we can do equally well by fixing the $R_1$ to be the same
+\o[8/12 12:44]{\texttt{multiAlockedR}}
+\o[8/12 12:42]{this fits good, except the tail of the fit is too broad -- probably more lorentzian vs. gaussian, so}
+set GIB to what we determined was a reasonable value, without allowing it to change, fit again, then allow GIB to change
+\o[8/12 14:01]{\texttt{multiAlockedRgib}}
+come back and fill in details about the field shifting
+\o[8/14 23:07]{we decided that we should not let it adjust the field in the top middle, but rather guess the shift in the bottom right.  Also, the field and range from the file are ignored, so I write into the ipynb in the sharepoint folder to print out the frequency, field, and range}
+\o[8/14 23:09]{saved the result for temp 00 as *00.Settings in the JF subfolder}
+in the JF subfolder, open her low-T fit, which was bad
+\texttt{LowT_223K_Dodec_20mM_TS_W3.Settings}
+start by turning the potentials off, and fitting
+\o[8/15 00:15]{did that, and then turned potentials on}
+then allow two components, but fix $A_{zz}$
+\o[8/15 00:40]{here did this and many other things -- stop}
+leave MC to run overnight
+\o[8/15 00:48]{}
+come back and check in morning
+\o[8/15 07:51]{not too much change -- computer might have hung}
+come back and save \texttt{JF*MC.Settings} again
+\o[8/17 20:44]{done}
+then try enabling change of the angles -- magnetic b/c it's slow moving, and the same for both components, as well and just do an LM
+\o[8/17 20:46]{before starting save as \texttt{LowT_223K_Dodec_20mM_TS_W3_afterMC}}
+\o[8/17 20:50]{didn't change but looked like it affected the curved region}
+set all to 20
+\o[8/17 20:50]{this affects the peak positions}
+let it fit tensors as well as angles and rotational correlation time
+\begin{err}
+    \o[8/17 20:58]{it's not changing the angles, and converges on something weird}
+    do simplex so that it takes bigger steps
+    (note that in simplex, the stepsize for the angles is set to a larger value)
+    \o[8/17 21:02]{after some good jumping around, the fit starts to converge a bit, and it seems like it doesn't know what to change}
+    stop, accept all, and switch to LM
+    \o[8/17 21:06]{this is better for the feature we're investigating, but not overall better}
+    just allow everything to vary, including rotational anisotropy
+    \o[8/17 21:09]{accidentally wiped parameters}
+    start with simplex (for everything) and when it starts to flatten, cancel, accept and LM
+    \o[8/17 21:14]{realize while doing this I'm better off with an MC, and that I haven't tried non-parallel}
+    try non-parallel MC
+    \o[8/17 21:14]{when I do this, I can see it jumping around, though I don't know if it's doing better}
+    \o[8/17 21:17]{realize that the way he describes it, if I understand correctly, there isn't an advantage to parallel MC, since the MOMD is done in parallel anyways}
+    let this run until close or converged, and then LM
+    \o[8/17 21:33]{because I accepted whiel it was running (and not after cancel), when I copied parameters, I didn't get the best}
+    \o[8/17 22:40]{here} cancel the MC which is pretty flat, accept parameters and
+    \texttt{LowT_223K_Dodec_20mM_TS_W3_MCmanypar}
+    then, LM that
+    \o[8/17 22:44]{doesn't help much}
+    investigate MC a little
+    \o[8/17 22:44]{because of the way it's described, try}
+    setting all to xyz
+    \o[8/17 22:45]{current best 4.8e-6 (I think was more like 4e-6 from the last run)}
+    leave to run and see how it goes overnight
+    \o[8/18 06:34]{stupid thing rebooted!}
+    \o[8/18 06:45]{running, at 6.7e-6}
+    \o[8/18 09:09]{now 4.75e-6}
+    come back, cancel, accept, reeval, and check that the deviation number is correct
+    \o[8/18 09:18]{when I reeval, it doesn't give the best value -- maybe I need to wait longer}
+    in any case, decrease the ``global'' settting for MC to 0.5, see if I can get back down to 4.75e-6
+    \o[8/18 09:24]{best is 4.68e-6 now!}
+    \o[8/18 09:27]{4.65e-6}
+    hit cancel, and wait for the message,
+    be sure to save the table of fit results, in case that is different from ``best fit'' under the parameters
+    \o[8/18 09:28]{240818_fitresults.txt}
+    \o[8/18 09:28]{yes, current is not best}
+    \o[8/18 09:32]{I'm getting 4.718 instead of 4.657e-6.  I'm wondering of this is just a precision issue.}
+    Then, try decreasing the ``global factor'' to 0.1
+    (this decreasing of the global is analogous to a step in simulated annealing)
+    \o[8/18 09:34]{down to 4.607e-6 relatively quickly}
+    \o[8/18 10:21]{3.838e-6}
+    \o[8/18 10:23]{\texttt{LowT_223K_Dodec_20mM_TS_W3_SAmanypar.Settings}}
+    run LM just to see
+    \o[8/18 10:26]{not much different}
+    global factor to 0.05
+    also alter the simplex step size (used to determine relative sizes for MC), increasing the angles to 5, and decreasing the scale to 0.01
+    \o[8/18 10:38]{ran just a little}
+    have to cancel for church
+    \o[8/18 10:38]{\texttt{LowT_223K_Dodec_20mM_TS_W3_SAmanypar2.Settings}}
+    re-fit at 1.0 with above tweaks to relative magnitude
+    while I'm at it, also allow the angle and c to change for the second set
+    \o[8/18 14:39]{at 7.22e-6 and not finding new best after full window}
+    cancel, accept all,
+    decrease global factor to 0.5 and go again
+    once it's done, just do an LM where I fix the isotropic g, but allow the g anisotropy to vary for set B
+    \o[8/18 14:40]{\texttt{LowT_223K_Dodec_20mM_TS_W3_SAmanypar3.Settings} - to be overwritten}
+    let run for half hour or so, and then move to 0.1
+    also fix the isotropic g for both components, and allow that to vary
+    \o[8/18 16:06]{6.67e-6}
+    \sout{let it run for a bit and then move to 0.03}
+    \o[8/18 16:09]{it got goofy when I made the parameter changes}
+    actually, just use xyz for the A and g tensors and let them vary
+    just let it run for a bit at 1.0 again,
+    \texttt{LowT_223K_Dodec_20mM_TS_W3_SAmanyparB.Settings} - to be overwritten
+    \o[8/18 16:27]{ran for a very short time}
+    run an LM to get something reasonable
+    and run at 0.5
+    \o[8/18 16:29]{starts at 7.15e-6}
+    \o[8/18 16:30]{at 0.5, though it's not changing right away, the value slook more ``reasonable''}
+    \begin{err}
+        \o[8/18 16:34]{A is consistently too small, so} force it to be bigger
+        \o[8/18 19:08]{running at 0.5, not much improvement}
+        play a bit with LM and fixing some parameters, so that I can get others to move
+        \o[8/18 19:17]{end up loading \texttt{LowT_223K_Dodec_20mM_TS_W3_SAmanypar3}}
+        \o[8/18 21:04]{here I realized that I'm better taking that and running an MC without any order parameters}
+        \o[8/18 21:53]{keeps giving me problems were one of the A values is negative}
+        MC for a while with 3rd component of tensor A set to zero, and with isotropic g fixed as well, also increase MC global to 10
+        \o[8/18 22:01]{found that gib0 was set large, which was really messing with understanding the other parameters, so} just set it to 1.4
+        \o{\texttt{LowT_223K_Dodec_20mM_TS_W3_LMnoorder}}
+        then let it run MC with global of 10 overnight,
+        with T3 set to 0
+        \o[8/19 07:03]{\texttt{LowT_223K_Dodec_20mM_TS_W3_MCnoorder} this is not very good}
+        load SAmanypar, and set the T3 components to 0 and gib0 to 1.4 (both fixed) and fit again with LM
+        \o[8/19 08:00]{not working, so do monte carlo with global amp of 1.0}
+        \o[8/19 08:05]{actually getting a reasonably decent result just from LM where I fix things in this way}
+        save result as \texttt{LowT_223K_Dodec_20mM_TS_W3_LMdecentfix}
+        \o[8/19 08:11]{}
+        let it run MC with global amplitude 1.0, simplex parameters default, and gib0 set to 1.6 (fixed)
+        \o[8/19 08:12]{1.122e-5}
+        after letting it run for a while, also allow it to pull order
+        parameters from a second set
+        \o[8/19 08:15]{I actually did this now -- it was already pulling from the secone set, but they were fixed}
+        \o[8/19 08:17]{1.08e-5}
+        \o[8/19 09:35]{1.03e-5}
+        save result as \texttt{LowT_223K_Dodec_20mM_TS_W3_SAdecentfix}, for overwriting
+        got to 0.7 and fit some more
+        \o[8/19 09:52]{9.77e-6}
+        at the end, just do an LM allowing the T3 component to vary
+        \o[8/19 09:54]{didn't do much, so just}
+        go down to 0.5 with the tensor anisotropies turned on
+        \o[8/19 10:01]{not much improvement}
+        fit three parameters with no A anisotropy and 1.6 gib0 with LM, no order parameter
+        \o[8/19 11:03]{ended up turning on MC -- 7.96e-6}
+        \o[8/19 11:05]{\texttt{LowT_223K_Dodec_20mM_TS_W3_MCdecentfix}}
+        re-open the good fit I had gotten from LM without order parameters
+        \o[8/19 11:18]{because this had negative values for Ay, I swapped Ax and Ay and made both positive (roughly) -- while this didn't give a good fit, subsequently minimizing it gave me a very good fit \texttt{LowT_223K_Dodec_20mM_TS_W3_perfectfit}}
+        \o[8/19 11:26]{but then I realize it has two really weird components, and one has negative A}
+        after trying other stuff, reload the ``perfectfit'' that has a negative a, and gradually nudge it until positive
+        \texttt{LowT_223K_Dodec_20mM_TS_W3_perfectthenpositive}
+        (fix it and leave others alone)
+        \o[8/19 11:55]{this looks OK, and I think shows an A component that's slightly higher Az}
+        \o[8/19 12:04]{there was confusion here -- perfectfit was a 2 component}
+        just run MC on a single component to see what it can do
+        \o[8/19 12:09]{4.7e-6, which I think is a decent number, so save it}
+        \o[8/19 12:10]{\texttt{LowT_223K_Dodec_20mM_TS_W3_MCsinglenoorder}}
+        \o[8/19 12:22]{after forcing positive \texttt{LowT_223K_Dodec_20mM_TS_W3_singlenoorderforcepos}}
+        \o[8/19 12:39]{then, I overwrite above by noticing that a very slight negative betaM allows for the ``flatness'' on the left side}
+        to get it to use c20, do the same thing where I fit with a slight c20, constrained, before allowing it to fit
+        \o[8/19 13:08]{I'm wasting tons of time on this, so}
+        leave it to just run MC
+        all tensors variable, $\psi$ variable, diffusion tilt variable,
+        c20 variable, scale and shift variable,
+        gib0 fixed to 1.4 or 1.6, and $\beta_M=-4$
+        \o[8/19 15:42]{save these as \texttt{LowT_223K_Dodec_20mM_TS_W3_checkpoint1}}
+
+    \end{err}
+    come back and see where it's at and
+    drop down to global parameter of 0.1
+
+\end{err}
+\paragraph{conversation with romana}
+look at her Cat16 isooct $w_0=3$, and see if there is any of the weirdness noted above by pulling here settings for 222.878K\_trial2
+\o[8/19 16:09]{slowly turning on parameters as above, we get something reasonable that has a ``flat'' part between the first hump and first peak
+\texttt{240226_CAT16_Isooct_w3_cooling_222.878K_meeting1}
+this was (by accident) MC followed by LM}
+I see that Az is too large, so try to force it smaller and fit around
+\o[8/19 16:13]{}
+then, do the same with the $\beta_M$
+\o[8/19 16:34]{I did allow beta to vary, then I turn on $c_{2,2}$}
+\o[8/19 16:35]{needed to fix Ay, which went negative}
+save the result as \texttt{240226_CAT16_Isooct_w3_cooling_222.878K_meeting2}
+leave to run MC
+\o[8/19 17:10]{5.832e-6}
+\o[8/19 17:16]{accepted, turned on $c_{2,2}$, and turn global down to 0.5}
+\o[8/19 17:23]{4.33e-3}
+\o[8/19 17:29]{here also adjust fitting options, position}
+\o[8/19 17:30]{after a little fitting at 1.406e-5 (means different than previous because I changed the start and end positions)}
+\o[8/19 20:58]{save \texttt{240226_CAT16_Isooct_w3_cooling_222.878K_JFMC1} of MC that's been running for a bit}
+seems caught in a minimum, so increase weight to 2, and allow it to run for a bit
+\o[8/19 21:02]{at 5.32e-6 now}
+\texttt{240226_CAT16_Isooct_w3_cooling_222.878K_JFMC2}
+\o[8/20 00:01]{this was saved before}
+even with MC, I'm having trouble getting the weird inflection that was bothering me before
+because I think this is a combo of R anisotropy and the angles, have it fit the R components as Cartesian (setting as tensors makes it ambiguous if one of them will even get changed, which I think encourages it to keep the same symmetry)
+\o[8/20 00:02]{currently at 1.27e-5}
+stop and set max iterations to 200k to be sure
+also note that the range for fitting is still set properly
+\o[8/20 05:58]{8.29e-6 \texttt{240226_CAT16_Isooct_w3_cooling_222.878K_JFMC3}}
+\paragraph{proceeding more directed following conversation with RS}
+\o[8/20 05:59]{}
+also allow magnetic tilt angle to vary -- go back down to a global of 1
+\o[8/20 06:15]{this didn't do anything after a fit}
+try loading \texttt{LowT_223K_Dodec_20mM_TS_W3_JFonecomp.Settings}, which has a similar inflection
+\o[8/20 06:16]{this didn't look the correct width, so I told it that my spectrum was 100G}
+change the width and fit,
+when done save as
+\texttt{240226_CAT16_Isooct_w3_cooling_222.878K_JFfromprev}
+\o{$\checkmark$}
+then try to reload the JFMC3 set above, and see if it keeps the same field range or changes it
+\o[8/20 06:22]{yes, it went from 99.9 to 100}
+\textbf{need to identify from RS what the correct width is}
+
+first, note that gib0 is pretty high ($>2$) so try to walk it down
+do this with R anisotropy and diffusion tilt enabled
+\o[8/20 06:40]{call this JFfromprev2}
+try starting from the JFfromprev2 set, which has 5.10e-6 and a very high order parameter,
+and a sharp peak to the right bump,
+first set the A3 to zero (since x was larger than y), and run an LM
+\o[8/20 06:45]{2.14e-5 and not great fit, but}
+just go for the MC
+also allow R anisotropy to vary (interestingly, it's not zero to start with)
+\o[8/20 06:46]{change to R was done above}
+let it run
+\o[8/20 07:13]{JFfromprev2MC}
+\o[8/20 07:17]{this didn't help a lot, but here I found that increasing \texttt{nort} did improve the ``spikiness'' of the peak, so}
+do that, and allow it to fit LM
+\o[8/20 07:21]{didn't save this!}
+refresh on how order parameter is supposed to reflect
+\o[8/20 07:19]{it's the outer max/min vs inner min/max}
+try to remove the 4,0 term and re-fit (just set to zero and re-fit)
+\o[8/20 07:24]{I think this is somewhat helping the shape of the rightmost peak}
+\o[8/20 07:26]{\texttt{JFfromprev2MCtweakorder1}}
+then try to remove the 2,2 term
+\o[8/20 07:27]{I have to increase \texttt{nort} to 30, and unlike 4,0, completely removing is too far}
+since it was about -20, fix 2,2 to -15
+\o[8/20 07:36]{\texttt{JFfromprev2MCtweakorder2}}
+then fix 2,2 to -10
+\o[8/20 11:49]{}
+then fix 2,2 to -5 $\rightarrow$ also need to fix Ax to 5
+\o[8/20 11:52]{saved over JFfromprev2MCtweakorder2}
+then fix 2,2 to 0
+\o[8/20 11:53]{started}
+\o[8/20 11:53]{this makes it clear to me that either $A_x$ or $c_{2,2}$ needs to change to get the shape that we want -- both the shape of the peaks and the inflection point are off}
+\o[8/20 12:01]{done}
+finally, bring all three back in stepwise:
+first Ax
+\o[8/20 12:30]{I had to stop the fit because it wasn't changing, but doing this didn't affect the features that I'm looking at}
+\o[8/20 12:31]{realize that the g tensor is off}
+enter default values for g-tensor and fit around them
+\o[8/20 12:56]{}
+also enter and fit around T3 for A
+\o[8/20 14:08]{this was fit, and now}
+release fix of A and g3 -- make sure it fits to reasonable values
+
+\begin{err}
+    \o[8/20 14:24]{note that when I do this, it's messing up the curvature after the first hump}
+    try setting the diffusion tilt to what I think is reasonable -- 0,90,0, with R much larger along z than other directions
+    (this way the potential is also along z)
+    \o[8/20 14:38]{actually}
+    set reasonable values for A and g (based on my written notebook), then fix the R anisotropy and diffusion tilt, and let it fit
+    \o[8/20 14:50]{might be on to something here}
+    then fit allowing R2, keeping tilt angle constant
+    \o[8/20 14:52]{}
+    \o[8/20 14:53]{\texttt{240226_CAT16_Isooct_w3_cooling_222.878K_JFrestartreasonable}}
+    need to fix g, which is in wrong order
+    \o[8/20 14:57]{fixed}
+    then just allow $\beta_D$
+    \o[8/20 15:02]{}
+    try flipping sign on $c_{2,0}$ to make it positive
+    and also keep insisting that $R_2$ is +1
+    \o[8/20 15:06]{}
+    since I``m really interested in the order parameter here, run a monte carlo where I increase the order of magnitude of the order parameter, from 0.1, to 1.0, and then let it run
+    \o[8/20 15:06]{}
+    \o[8/20 15:07]{\texttt{240226_CAT16_Isooct_w3_cooling_222.878K_JFrestartreasonableMC}}
+    and run on VM2!
+    \o[8/20 15:23]{need to let it sync}
+    \o[8/20 15:57]{back here, loaded this file, and having it run as MC}
+    \o[8/20 15:58]{verify that the c is set to 1.0}
+    \o[8/20 16:00]{5.9e-5}
+    \o[8/20 21:07]{only reduced to about 5.7e-5}
+    put c in simplex back to 0.1
+    \o[8/20 21:16]{did this, and saved above as \texttt{240226_CAT16_Isooct_w3_cooling_222.878K_JFrestartreasonableMC}, but at this stage just messing around a bit}
+    increase c in simplex back to 1.0, and start from a different position
+    \o[8/20 21:33]{2.88e-5 -- has been going down for a bit}
+    \o[8/20 21:36]{here, I pushed Az in and also checked that the tensor order was OK}
+    if it seems to get stuck, increase the global MC
+    \o[8/20 21:37]{2.08e-5}
+    \o[8/20 21:49]{samed as \ldots MC3, but it's the same}
+    while I'm at it, increase global to 2
+    \o[8/20 21:56]{with global at 2, mess around with the parameters a bit}
+    load tweakorder2 from above -- it has a bad g ordering, so flip sign of T3 as needed, and let it do MC from there
+    \o[8/20 22:22]{I saved as tweakorder3}
+    leave with global 2 and 200k steps overnight, and just see what happens
+    \o[8/21 08:52]{it finished the 200k before morning, and I saved as \texttt{JFovernightMC}}
+    then run LM with ability to adjust gib0
+    \o{JFovernightMCLM}
+    fix A3 to -2, and re-run LM
+    \o{JFovernightMCLMtweakA}
+    \o[8/21 09:12]{trying to release A gives a positive value for A3, so}
+    instead set to -1.211, which is the literature value
+    \o[8/21 09:12]{}
+    \o[8/21 09:14]{overwrite JFovernightMCLMtweakA}
+    leave A fixed, and also fix the gib0 at the new value of 3.82, which looks good
+    fix $\alpha$ and $\beta$ at 0, restart $c_{2,0}=c_{2,2}=0$
+    and do a preliminary LM
+    \o[8/21 09:24]{looks decent, so} release gib0
+    \o[8/21 09:32]{JFnetstart and JFnewstartLM}
+    because of small peak in the center peak, repeatedly increase g2 and opt other parameters around it (fixed)
+    \o[8/21 09:50]{white fitting a bit decide to}
+    release A3 and switch g to 1,z,3 and increase g3 to prevent spike in center
+    \o[8/21 09:51]{\texttt{JF0821interactive}}
+    \o[8/21 10:10]{save as \texttt{JF0821interactive2}}
+    \o[8/21 10:14]{this peak is persistent, as is a light mismatch at the start of the right hump}
+    allow 3 angle variation, and then try just manually adjusting and fixing all 3 g
+    \o[8/21 10:22]{\texttt{JF0821forceG}}
+    try instead to mess with the peak by forcing gib0 to a higher value
+    \o[8/21 10:44]{based on the left shoulder, I can decide that 3.64 is too much for gib0}
+    \o[8/21 10:46]{\texttt{JF0821forceGthenmess}}
+    leave for a 600k MC with global 2, set C simplex to 3, and be sure that edge clipping is good
+    (these seem to not be loaded when loading settings)
+    \o[8/21 10:49]{2.83e-6}
+    \o[8/21 10:53]{here, just need to}
+    step away from this -- the fit is halfway decent, so go with it
+    \o[8/21 12:54]{still 2.83e-6}
+    come back and just check on this briefly
+    \o[8/21 17:05]{just 2.82e-6}
+    \o[8/21 17:05]{\texttt{JF0821forceGthenmess2}}
+    try changing the director to 90, given the negative potential -- also reset R to isotropic
+    \o[8/21 17:10]{doesn't affect}
+    reset angles and leave A/g unmovable, except Ax
+    \o[8/21 17:20]{seems to be doing something}
+    \o[8/21 17:29]{realized I was doing MC -- stop and do LM}
+    \o[8/21 17:32]{also fix gib0}
+    \o[8/21 17:34]{realize that because of the clipping I'm fighting a losing battle}
+    put c in simplex back to 0.1
+\end{err}
+since she has 0.5 mM cat 16 in dodecane w0 20, use that for a fit -- use one of these as a starting point:
+\texttt{JF0821forceGthenmess2},
+adjust the field,
+fix the A and g
+\o[8/21 17:58]{this didn't work, because the A is very tied to the motional stuff}
+set a reasonable g, A, c20 value, reset angle to $\beta=90$ and let it LM fit
+\o[8/21 17:59]{just let it MC for a while}
+\o[8/21 18:00]{2.4e-4}
+\o[8/21 18:20]{this ended up giving weird tensor values}
+try fitting around a c20 value of 4
+\o[8/21 18:24]{routinely, it keeps going for a high value of $c_{2,2}$, but I can get a reasonable fit with a positive $c_{2,0}$}
+\o[8/21 18:32]{save \texttt{JFposc20}}
+allow it to vary W as well as gib2 while Az and A3 are fixed
+\o[8/21 18:41]{\texttt{JFposc20B}}
+\o[8/21 18:52]{when released, it keeps wanting to set A3 to positive}
+\o[8/21 18:54]{stop at ctb here}
+figure out what it's correlated with, and change that!
+\o[8/21 21:07]{this didn't work because it was frequently giving singular matrix error}
+\o[8/21 21:07]{I find that it's frequently useful to set most or all of the magnetic tensors (once we are close to a shape that we like), and then }
+starting from close to the \texttt{JFposc20B}, because I'm thinking higher order order potential might control the very peaks that are mismatched, turn on several of the order parameters, with most of the magnetic stuff fixed, and leave to fit MC
+\o[8/21 21:08]{9.11e-6}
+\o[8/21 21:18]{restart 1.78e-5 -- this is probably a good strategy -- note that the position of the left edge of the first dip seems to be controlled by gx}
+\o[8/21 21:41]{but, here I realize that the director isn't oriented along the NO like I would expect, so restart with R longer along z and fix the potential to be along x}
+
+
+
+then 
+
+then $c_{2,2}$
+
+then 4,0
+
+and finally gib0 -- do not allow it to vary, but use the curvature on the side as a guide to whether it needs to be turned up or not
+
+she tried to install on as-jmfranck-vm2.ad.syr.edu
+-- she's going to try standard lab passwords, then I'll try my desktop password
+
+see if I can turn off the second parameter set, and still get a decent fit using MC
+
+\o[8/22/24 16:08]{here I switch computers following the 8/21 notes above -- save result as \texttt{JFovernight} and note that these dodecane files are being stored in the isooctane folder}
+\o[8/22/24 16:09]{in this file, I've apparently constrained A3 while allowing for $c_{2,0}$ and $c_{4,0}$; I get weird numbers for the c values, but the visualization shows a pretty tight cone, but the rotation is strongest along $x$, which means that what's being plotted in an axis that's normal to the surfactant interface}
+release gib0, diffusion angles, and c22 (was zero) and do LM
+\o[8/22/24 16:22]{here, I realize the fit I had (which I remember was 1.522e-5) wasn't great!}
+force the anisotropy of $R$ in a way that favors z, and then let it run
+\o[8/22/24 16:31]{6.28e-4}
+\o[8/22/24 16:49]{too much playing!}
+leave on an MC where I fix the A3 \sout{and g3} and set the shift simplex step to a smaller number (was 1.0, set to 0.1),
+the g to a smaller number (was 0.001, set to 0.0001, and may want smaller!)
+also set global to 10
+\o[8/22/24 16:58]{2.7e-5, and the right hump looks slightly more like a peak vs. hump}
+\o[8/22/24 17:03]{1.33e-5}
+\o[8/22/24 17:02]{setting g to cartesian makes it easier for it to convert the ``peak'' to a ``hump''}
+just step away now!
+\o[8/28/24 12:59]{come back here to check on it}
+\o[8/28/24 12:59]{someone kicked me off, so instead, review my notes here}
+check which is better \texttt{multiAlockedRgib} or \texttt{multiAlockedR}
+
+\paragraph{try to approach more systematically}\label{sec:JFaltenbachSystematic}
+first, look at the data she gives at the end of the paper to find a good \& interesting dataset
+\o[8/29/24 13:49]{cat 16 in dodecane, $w_0=20$ and tempo-so4 in dodecane $w_0=3$ are both reasonable options, with the former being more interesting}
+
+then looking at Budil and Altenbach and maybe Budil and Fajer, figure out what
+the $\alpha,\beta,\gamma$ rotation means, and what a reasonable set of
+angles/order parameters would look like for us.
+\o[8/28/24 20:59]{from my paper, the angles rotate from the ``larger'' (lab) to ``smaller'' (director, diffusion/molecular, g, A); note that we talk about one set of angles from director to diffusion, and another to g, but I think in Multicomponent, director and diffusion are assumed to be coaxial? or that could be the point of the $\psi$?}
+\o[8/28/24 21:05]{but Budil (Saxena Freed) paper talks about ``taking into'' which to me means how the lab frame appears from within the director frame, etc.}
+\o[8/28/24 21:11]{\cite{Budil2006} gives nice pictures of the type that I'm thinking about -- though note here the director is aligned with $z$}
+probably need more time to think about why the director is aligned with $z$ for them, and if we think it's reasonable that it's not for us
+
+above I concluded:
+\begin{itemize}
+    \item we follow the diagram from the notes
+    \item left edge of the first dip controlled by $g_x$
+    \item ``inflections'' are a bit undetermined -- may have to do with $R$/tilt or with $A$
+    \item easier for it to optimize shape if we let it adjust cartesian $g$
+    \item in multicomponent, need to make sure to adjust the mask
+\end{itemize}
+so keeping these in mind:
+force the anisotropy of $R$ in a way that favors $z$,
+fix the $A_3$,
+set the $c$ and $\alpha,\beta,\gamma$
+and set $g$ to cartesian
+
+then also allow for rotational anisotropy
+
+fit LM and MC if needed, then switch to \cref{sec:EasySpinTensor}
+
+edit notes -- it's just $\tau=1/6D$
+\o{$\checkmark$}
+her export seemed funny, so look into that
+\o[8/14 23:40]{it exports as tab-delimited text, but does just open an excel window}
+
+\paragraph{reading and writing data}
+\sout{Run monte-carlo to see if it fixes the fact that the max on the right side isn't quite right}
+\o[8/12 15:41]{no need -- it's pretty good!}
+make a notebook that exports the data at even intervals of shape difference
+\o{did this, and drafted description on GPT}
+\o{
+    \texttt{low_t_slice_240812_04.ascii}
+    \texttt{low_T_slice_240812_09.ascii}
+    \texttt{low_T_slice_240812_15.ascii}
+    \texttt{low_T_slice_240812_21.ascii}
+    \texttt{low_T_slice_240812_29.ascii}
+}
+one after the other, load each of these, then \textit{EPR Parameters} $\Rightarrow$ \textit{global settings} $\Rightarrow$ \textit{accept all}
+.. $\Rightarrow$ Load/save settings $\Rightarrow$ save current settings use same filename as .ascii
+\o[8/12 16:28]{done}
+move all the files to the shared folder, so that I can keep track of them
+\o{$\checkmark$}
+\begin{err}
+    \o[8/19 19:48]{try to set up on vm}
+    \o[8/19 19:48]{tried azurevpn, which is not working}
+    try at home, and set network to private
+
+\end{err}
+to read the settings, make a settings file with some numbers -- 20, 30, etc, and then search the file for those numbers
+
+figure out how to see the separate components $\rightarrow$  there is a ``view'' button in the middle of the global settings page that might be it
+
+get RS to assemble the results into a spreadsheet
+
+\paragraph{install on VM}
+\o[8/20/24 14:12]{RS had tried to install on VM \texttt{as-jmfranck-vm2.ad.syr.edu} but didn't know password. I tried last night, but because of traffic couldn't get azurevpn or rds to work}
+see that I can log on now, and what the password is
+\o[8/20/24 14:22]{this is my personal password (yr one word excl)}
+reboot after install, and because it's complaining about the H drive
+\o[8/20/24 14:29]{still complaining about the H drive}
+
+check azurevpn and rds at home again: in particular, check on nando's computer vs. my laptop
+
+\subsubsection{tensors in EasySpin}\label{sec:EasySpinTensor}
+Altenbach's program is super fast and offers lots of insight, but the minimization routines suck because of the lack of bounds.
+Take the insight and apply to easyspin by making a function with tensor-based defs.
+
+Start by asking what the matrix is to go from the spherical-tensor-like to cartesian.
+\o[8/22/24 15:16]{by inverting, it's}
+\begin{verbatim}
+[[ 1.        ,  0.66666667,  1.        ],
+ [ 1.        , -1.33333333, -1.        ],
+ [ 1.        ,  0.66666667,  0.        ]])
+\end{verbatim}
+\o[8/22/24 15:17]{which is}
+\begin{verbatim}
+[[ 1. ,  2/3,  1.],
+ [ 1. , -4/3, -1.],
+ [ 1. ,  2/3,  0.]])
+\end{verbatim}
+so, draft up what I would like to do for easyspin
+\o{$\checkmark$}
+\begin{verbatim}
+function cart = sph_to_cart(sph)
+    thematrix = [ 1 2/3 1;
+        1 -4/3 -1;
+        1  2/3  0];
+    sph[2] = sph[1]*sph[2];
+    sph[3] = sph[1]*sph[3];
+    cart = transpose(thematrix * transpose(sph));
+end
+function chili_as_sph()
+    newStruct = origStruct;
+    % the isotropic part of R will be logarithmic
+    newStruct.R[1] = 10^(origStruct.R[1]);
+    newStruct.R[2:3] = origStruct.R[2:3];
+    % The next part makes it so that what was
+    % input as normalized spherical gets
+    % converted back to cartesian.
+    % Specifically, note that what we call
+    % "normalized spherical" here is like
+    % altenbach's program, but also scaled by
+    % the isotropic value, so that (in most
+    % cases) we're going to want to set
+    % limits between 0 and 1 or -1 and 0.
+    attributes = {"A", "g", "R"};
+    for i = 1:numel(attributes)
+        newStruct.(attributes{i}) = sph_to_cart(origStruct.(attributes{i}));
+    end
+    % finally, need to convert R from linear to log
+    newStruct.Diff = log10(newStruct.R);
+    % then add 2 to g
+    newStruct.g = newStruct.g + 2.0;
+    % then the stuff where I allow the order parameter to vary
+    % also the part where we allow for a field shift
+end
+\end{verbatim}
+ask chatgpt how to express the matrix
+\o[8/22/24 15:45]{}
+\o[8/22/24 15:56]{done with this for now}
+ask RS for clean .m file that just does the order parameter thing
+\o{she sent
+this} \href{https://jmfrancklab.slack.com/archives/C05N2QWL8D8/p1724382675496489?thread_ts=1724355805.081979&cid=C05N2QWL8D8}{here}
+the input and return value are not defined
+above, and I did not yet update it to fit
+with order parameter, as in RS code, so first
+make those changes
+
+set up an optimization that uses this
+function
+(thus, uses the order parameter and takes
+tensors in the normalized spherical format)
+above and test with Levenberg inside the GUI,
+where I set the bounds $0\rightarrow1$ as
+appropriate for the normalized spherical
+format
+
+install easyspin on VM
+
+then let it run overnight with matlab \href{https://www.mathworks.com/help/gads/globalsearch.html}{GlobalSearch}
+

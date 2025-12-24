@@ -1,0 +1,80 @@
+
++++  Fitting Parameters  +++
+
+ Parameter_Set          Value          Error      Component
+                                                           
+          Ax_0       4.677376       0.220830           AB__
+          Ay_0       6.988000       0.089771           AB__
+          Az_0      35.439184       0.159230           AB__
+          gx_0       2.010962       0.001447           AB__
+          gy_0       2.004584       0.001464           AB__
+          gz_0       2.001130       0.001410           AB__
+          R1_0       7.471792       0.051690           A___
+          R1_1       7.556609       0.094355           _B__
+          R2_0      -1.019888       0.172095           A___
+          R2_1       1.244159       0.204335           _B__
+          R3_0       0.330637       0.021173           A___
+          R3_1       1.208313       0.338819           _B__
+          Wx_0       2.845762       0.177421           AB__
+          Wy_0      -1.319083       0.113593           AB__
+          Wz_0      -0.521378       0.146694           AB__
+       scale_0       0.449302       0.023125           A___
+       scale_1       0.667493       0.025646           _B__
+       shift_0      -1.791040       2.394953           AB__
+
+
++++ Spectrum Components +++
+
+Comp A: A(x,y,z,1,2,3) =     4.68     6.99    35.44    15.70    29.61    -2.31
+Comp A: g(x,y,z,1,2,3) =  2.01096  2.00458  2.00113  2.00556 -0.00664  0.00638
+Comp A: R(x,y,z,1,2,3) =     7.98     7.65     6.79     7.47    -1.02     0.33
+Comp A: Tc(x,y,z,mean) =   1.76ns   3.76ns  26.91ns   5.62ns
+Comp A: W(x,y,z,1,2,3) =     2.85    -1.32    -0.52     0.34    -1.28     4.16
+Comp A: P(1,xy,zz)     =     0.00     0.00     0.00
+Comp A: gib0, gib2     =     0.00     0.00
+Comp A: djf, djfprp    =     0.00     0.00
+Comp A: oss, psi       =     0.00     0.00
+Comp A: alphaD, betaD, gammaD   =     0.00     0.00     0.00
+Comp A: C20, C22, C40, c42, c44 =     0.00     0.00     0.00     0.00     0.00
+Comp A: S20, S22, S40, S42, S44 =    0.000    0.000    0.000    0.000    0.000
+Comp A: alphaM, betaM, gammaM   =     0.00     0.00     0.00
+Comp A: Scale, Shift,  Phase    =     0.45    -1.79     0.00
+Comp A: Nitrogen: 14N (I=1), Nort=15, ipdf = 0, ist = 0
+Comp A: lemx, lomx, kmx, mmx, pImx = 14 11 6 2 2
+Comp A: ml, mxy, mzz                = 0 0 0
+
+Comp B: A(x,y,z,1,2,3) =     4.68     6.99    35.44    15.70    29.61    -2.31
+Comp B: g(x,y,z,1,2,3) =  2.01096  2.00458  2.00113  2.00556 -0.00664  0.00638
+Comp B: R(x,y,z,1,2,3) =     7.75     6.54     8.39     7.56     1.24     1.21
+Comp B: Tc(x,y,z,mean) =   2.99ns  48.32ns 685.17ps   4.63ns
+Comp B: W(x,y,z,1,2,3) =     2.85    -1.32    -0.52     0.34    -1.28     4.16
+Comp B: P(1,xy,zz)     =     0.00     0.00     0.00
+Comp B: gib0, gib2     =     0.00     0.00
+Comp B: djf, djfprp    =     0.00     0.00
+Comp B: oss, psi       =     0.00     0.00
+Comp B: alphaD, betaD, gammaD   =     0.00     0.00     0.00
+Comp B: C20, C22, C40, c42, c44 =     0.00     0.00     0.00     0.00     0.00
+Comp B: S20, S22, S40, S42, S44 =    0.000    0.000    0.000    0.000    0.000
+Comp B: alphaM, betaM, gammaM   =     0.00     0.00     0.00
+Comp B: Scale, Shift,  Phase    =     0.67    -1.79     0.00
+Comp B: Nitrogen: 14N (I=1), Nort=15, ipdf = 0, ist = 0
+Comp B: lemx, lomx, kmx, mmx, pImx = 14 11 6 2 2
+Comp B: ml, mxy, mzz                = 0 0 0
+
+Comp C: Disabled
+
+Comp D: Disabled
+
+
++++ Global Settings +++
+
+Center Field, Range (gauss)  =    3353.00  100.00
+Microwave Frequency (GHz)    =   9.414960
+1024 points, First derivative spectrum
+
+Protons: 12 x 0.25 Gauss,  1 x 0.40 Gauss
+
+Natural abundance Carbon 13: None
+Volodarski Nitrogen splitting: None
+Modulation: None
+

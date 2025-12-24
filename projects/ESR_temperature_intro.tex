@@ -1,0 +1,68 @@
+\section{ESR Temperature control}
+\subsection{VTU notes from JF}
+\subsubsection{running VTU experiment with Braiman}
+confusion about assembly of the dewar apparatus
+\o{Braiman found manual for the ``VT ER4141'' on manualzz.com (Alec has link) -- verifies that there is no bottom teflon seal, only the rubber}
+Insert 6mm o.d. 2mm (?) o.d. tube into VTU apparatus, measure Q and frequency
+\o{9.338~GHz Q 2300}
+Turn on the VT at a low temperature:
+Turn on the evaporator heater at 10\%.
+\o{$\checkmark$}
+\begin{err}
+    here, it's not clear what a good heater power is for different temperatures -- we should know this
+    \o[12:13]{it does this automaticaly}
+\end{err}
+dry ice is -78.5°C -- so set 194 K
+\o[12:13]{cools down to 192 K fairly quickly} so go back to 275 to wait for actual sample
+put actual sample in (w/ Br and SiO$_2$
+\o[12:25]{does seem like tuning gets easier once the temperature drops below CO$_2$, but this is qualitative}
+allow the temperature to stabilize
+\o[12:26]{good now}
+\o[13:12]{for next time:}
+set evaporator to 30\%, heater limit to 20\% and settling time to 60
+\o[13:12]{(didn't do this)}
+tune (from scratch)
+\o[12:29]{diode starts to float at 6~dB}
+\o[12:30]{tuned -- Q 6300 at 9.33 GHz}
+copy \texttt{initial_scan_191101.DSC}
+\o[12:32]{}
+turn on all harmonics
+\o[12:32]{}
+\o[13:12]{finally stabilized temperature after much messing!}
+\begin{err}
+    \o[12:33]{temperature is too low! -- flow rate was very high before this}
+    open the temperature control window and mess with things
+    \o[12:36]{it set the evaporator to 0\%, which lead to a temperature that
+    was too high -- I pushed it to 2\%. By pushing the temperature settling
+    time to 7 s, I got it to stabilize}
+    \o[12:45]{it's oscillating again!}
+    turn down both heater and evaporator
+    \o[12:51]{still problematic}
+    increase the temperature settling time to 20~s to give it more time to
+    stabilize
+    \o[13:00]{nothing; notice that the gas flow coming out of the cavity seems very low}
+    increase the gas flow to 20\%
+    \o[13:05]{seems to be helping}
+    to make life easier, set temperature to 191~K and set tolerance to 3~K
+    \o[13:06]{it increased evaporator to 60\% and I increased the heater limit to 20\%}
+    \o[13:07]{now it's stabilized}
+    try to decrease evaporator to 50\% and see if it stays stable
+    \o[13:08]{ok for a few seconds}
+    and to 40\%
+    \o{seemed OK}
+    and to 30\%
+    \o[13:10]{just year decrease in flow now}
+\end{err}
+run
+\o[12:32]{}
+\o[13:13]{at 3 scans, I think I want 4 times the SNR, so run to at least 64 scans}
+\o[13:27]{at 22 scans now}
+increase the modulation amplitude to to 10~G, and re-run 64 scans
+\o[14:53]{this finished, possibly see more signal along large baseline slope but hard to tell}
+put into standby, Braiman asked for more scans so tuning again (dip moved?)
+(Q = 6700, f = 9.333 GHz)
+\o[15:10]{pull out sample and warm up}
+
+
+
+
